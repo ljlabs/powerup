@@ -1,10 +1,6 @@
 import { useState } from "react";
-
-export interface FilterState {
-  type: string | null;
-  complexity: string[];
-  runtime: string | null;
-}
+import { getFilterOptions } from "../../services/filterService";
+import type { FilterState } from "../../types/skills";
 
 interface Props {
   initialFilters?: FilterState;
@@ -18,20 +14,13 @@ const defaultFilters: FilterState = {
   runtime: null,
 };
 
-const typeFilters = ["Tools", "Prompts", "Configs"];
-const complexityFilters = ["Beginner", "Intermediate", "Advanced"];
-const runtimeFilters = [
-  { name: "TypeScript", color: "bg-[#C3E8FF]" },
-  { name: "Python", color: "bg-[#D1FADF]" },
-  { name: "JSON", color: "bg-[#FEE4E2]" },
-];
-
 export default function FilterSidebar({
   initialFilters = defaultFilters,
   onFilterChange,
   onClearAll,
 }: Props) {
   const [filters, setFilters] = useState<FilterState>(initialFilters);
+  const filterOptions = getFilterOptions();
 
   const update = (partial: Partial<FilterState>) => {
     const next = { ...filters, ...partial };
@@ -62,7 +51,7 @@ export default function FilterSidebar({
           <div>
             <span className="font-label-bold text-label-bold block mb-4">Type</span>
             <div className="flex flex-wrap gap-2">
-              {typeFilters.map((t) => (
+              {filterOptions.types.map((t) => (
                 <button
                   key={t}
                   className={`px-3 py-1 rounded-full border-2 border-on-background font-label-sm text-label-sm transition-all ${
@@ -82,7 +71,7 @@ export default function FilterSidebar({
           <div>
             <span className="font-label-bold text-label-bold block mb-4">Complexity</span>
             <div className="flex flex-col gap-2">
-              {complexityFilters.map((c) => (
+              {filterOptions.complexities.map((c) => (
                 <label key={c} className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -100,7 +89,7 @@ export default function FilterSidebar({
           <div>
             <span className="font-label-bold text-label-bold block mb-4">Runtime</span>
             <div className="flex flex-wrap gap-2">
-              {runtimeFilters.map((r) => (
+              {filterOptions.runtimes.map((r) => (
                 <button
                   key={r.name}
                   className={`px-3 py-1 rounded-full border-2 border-on-background font-label-sm text-label-sm hover:-translate-y-0.5 transition-all ${

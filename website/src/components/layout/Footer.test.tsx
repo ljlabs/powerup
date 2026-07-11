@@ -22,7 +22,7 @@ describe("Footer", () => {
     expect(screen.getByText(/2024 Claude Skills Storefront/)).toBeInTheDocument();
   });
 
-  it("renders social links", () => {
+  it("renders GitHub and Documentation links", () => {
     render(
       <MemoryRouter>
         <Footer />
@@ -30,6 +30,5 @@ describe("Footer", () => {
     );
     expect(screen.getByText("GitHub")).toBeInTheDocument();
     expect(screen.getByText("Documentation")).toBeInTheDocument();
-    expect(screen.getByText("Discord")).toBeInTheDocument();
   });
 });

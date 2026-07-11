@@ -1,21 +1,12 @@
-export interface SkillFile {
-  name: string;
-  size: string;
-  lastModified: string;
-  content: string;
-}
-
-export interface SkillMeta {
-  slug: string;
-  name: string;
-  description: string;
-  tags: string[];
-  files: string[];
-  author?: string;
-  version?: string;
-  icon?: string;
-  readme?: string;
-  features?: string[];
-  useCommand?: string;
-  skillFiles?: SkillFile[];
-}
+/**
+ * Re-export all types from the skills module
+ */
+export type {
+  SkillMeta,
+  SkillFile,
+  Category,
+  SkillCard,
+  FeaturedSkill,
+  FilterState,
+  FilterOptions,
+} from "./types/skills";

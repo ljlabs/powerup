@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom";
 import Logo from "./Logo";
-import ButtonIcon from "../ui/ButtonIcon";
 
 interface Props {
-  currentPage?: "home" | "library";
+  currentPage?: "home" | "library" | "docs";
 }
 
 export default function TopNavBar({ currentPage = "home" }: Props) {
@@ -34,12 +33,16 @@ export default function TopNavBar({ currentPage = "home" }: Props) {
         >
           Library
         </Link>
-        <div className="flex items-center gap-2">
-          <ButtonIcon icon="dark_mode" size="sm" />
-          <button className="bg-brand-yellow font-label-bold px-4 py-2 border-2 border-on-background rounded-xl shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] hover:shadow-[6px_6px_0px_0px_rgba(26,26,26,1)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none transition-all">
-            Sign In
-          </button>
-        </div>
+        <Link
+          to="/docs"
+          className={`font-label-bold hover:-translate-y-0.5 transition-all border-b-4 ${
+            currentPage === "docs"
+              ? "text-on-background border-tertiary-fixed-dim"
+              : "text-secondary border-transparent"
+          }`}
+        >
+          Docs
+        </Link>
       </nav>
 
       <button className="md:hidden material-symbols-outlined p-2 border-2 border-on-background rounded-xl bg-surface-container-high shadow-[4px_4px_0px_0px_rgba(26,26,26,1)]">

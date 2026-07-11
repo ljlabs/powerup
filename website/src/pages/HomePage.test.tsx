@@ -37,6 +37,6 @@ describe("HomePage", () => {
         <HomePage />
       </MemoryRouter>
     );
-    expect(screen.getByText("Build Your Own Skill")).toBeInTheDocument();
+    expect(screen.getByText("Publish Your Own Skill")).toBeInTheDocument();
   });
 });

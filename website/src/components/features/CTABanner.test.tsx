@@ -4,52 +4,52 @@ import { MemoryRouter } from "react-router-dom";
 import CTABanner from "./CTABanner";
 
 describe("CTABanner", () => {
-  it("renders the Build Your Own Skill heading", () => {
+  it("renders the Publish Your Own Skill heading", () => {
     render(
       <MemoryRouter>
         <CTABanner />
       </MemoryRouter>
     );
-    expect(screen.getByText("Build Your Own Skill")).toBeInTheDocument();
+    expect(screen.getByText("Publish Your Own Skill")).toBeInTheDocument();
   });
 
-  it("renders the Get Developer Docs button", () => {
+  it("renders the Read the Docs button", () => {
     render(
       <MemoryRouter>
         <CTABanner />
       </MemoryRouter>
     );
-    expect(screen.getByText("Get Developer Docs")).toBeInTheDocument();
+    expect(screen.getByText("Read the Docs")).toBeInTheDocument();
   });
 
-  it("renders the Discord section", () => {
+  it("renders the bug report section", () => {
     render(
       <MemoryRouter>
         <CTABanner />
       </MemoryRouter>
     );
-    expect(screen.getByText("Join the Discord")).toBeInTheDocument();
-    expect(screen.getByText(/50,000\+ creators/)).toBeInTheDocument();
+    expect(screen.getByText("Found a Bug?")).toBeInTheDocument();
+    expect(screen.getByText(/Help us improve by filing an issue/)).toBeInTheDocument();
   });
 
-  it("renders the Launch Community link", () => {
+  it("renders the Open an Issue link to GitHub", () => {
     render(
       <MemoryRouter>
         <CTABanner />
       </MemoryRouter>
     );
-    const link = screen.getByText("Launch Community");
-    expect(link).toHaveAttribute("href", "https://discord.com");
+    const link = screen.getByText("Open an Issue");
+    expect(link).toHaveAttribute("href", "https://github.com/anthropics/claude-code/issues");
     expect(link).toHaveAttribute("target", "_blank");
   });
 
-  it("links the skill builder to the gallery", () => {
+  it("links the publish section to the docs page", () => {
     render(
       <MemoryRouter>
         <CTABanner />
       </MemoryRouter>
     );
-    const link = screen.getByText("Build Your Own Skill").closest("a");
-    expect(link).toHaveAttribute("href", "/skills");
+    const link = screen.getByText("Publish Your Own Skill").closest("a");
+    expect(link).toHaveAttribute("href", "/docs");
   });
 });

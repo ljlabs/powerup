@@ -4,7 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import TopNavBar from "./TopNavBar";
 
 describe("TopNavBar", () => {
-  it("renders Home and Library links", () => {
+  it("renders Home, Library, and Docs links", () => {
     render(
       <MemoryRouter>
         <TopNavBar />
@@ -12,15 +12,7 @@ describe("TopNavBar", () => {
     );
     expect(screen.getByText("Home")).toBeInTheDocument();
     expect(screen.getByText("Library")).toBeInTheDocument();
-  });
-
-  it("renders the Sign In button", () => {
-    render(
-      <MemoryRouter>
-        <TopNavBar />
-      </MemoryRouter>
-    );
-    expect(screen.getByText("Sign In")).toBeInTheDocument();
+    expect(screen.getByText("Docs")).toBeInTheDocument();
   });
 
   it("renders the hamburger menu on mobile", () => {
@@ -50,5 +42,15 @@ describe("TopNavBar", () => {
     );
     const libraryLink = screen.getByText("Library");
     expect(libraryLink.className).toContain("border-tertiary-fixed-dim");
+  });
+
+  it("highlights Docs when currentPage is docs", () => {
+    render(
+      <MemoryRouter>
+        <TopNavBar currentPage="docs" />
+      </MemoryRouter>
+    );
+    const docsLink = screen.getByText("Docs");
+    expect(docsLink.className).toContain("border-tertiary-fixed-dim");
   });
 });

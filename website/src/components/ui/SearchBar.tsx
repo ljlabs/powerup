@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Props {
   placeholder?: string;
   size?: "sm" | "md" | "lg";
   showButton?: boolean;
+  value?: string;
   onSearch?: (query: string) => void;
   onChange?: (query: string) => void;
 }
@@ -33,10 +34,17 @@ export default function SearchBar({
   placeholder = "Search skills...",
   size = "md",
   showButton = false,
+  value: controlledValue,
   onSearch,
   onChange,
 }: Props) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(controlledValue || "");
+
+  useEffect(() => {
+    if (controlledValue !== undefined) {
+      setQuery(controlledValue);
+    }
+  }, [controlledValue]);
   const s = sizes[size];
 
   const border = size === "lg" ? "border-4" : "border-2";

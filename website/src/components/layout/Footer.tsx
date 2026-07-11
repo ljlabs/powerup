@@ -28,12 +28,6 @@ export default function Footer({ className = "" }: Props) {
         >
           Documentation
         </a>
-        <a
-          className="text-secondary hover:text-primary transition-colors"
-          href="#"
-        >
-          Discord
-        </a>
       </div>
     </footer>
   );
