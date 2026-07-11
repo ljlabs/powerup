@@ -72,7 +72,7 @@ workspace/
 
 - Skills live at workspace root (or a custom path)
 - Website lives in a subdirectory (e.g., `website/`)
-- Manifest generator uses `SKILLS_DIR` environment variable to find skills
+- Manifest generator uses default path resolution (`../skills` relative to `website/scripts/`)
 - GitHub Actions uses `working-directory: website` to build from subdirectory
 - Creates root README.md and .gitignore automatically
 
@@ -115,14 +115,58 @@ Skill documentation here...
 
 Run `npm run generate-manifest` again to pick up new skills.
 
-## Deployment
+## GitHub Pages Deployment
 
 Push to `main` and GitHub Actions will automatically:
 1. Scan `skills/` and generate the manifest
 2. Build the React app
 3. Deploy to GitHub Pages
 
-The workflow file is at `.github/workflows/deploy.yml`.
+### How the deployment works
+
+The workflow uses `peaceiris/actions-gh-pages@v4` which pushes the built `dist/` output to a dedicated `gh-pages` branch. GitHub Pages serves from that branch.
+
+**Workflow file:** `.github/workflows/deploy.yml`
+
+### Setting up GitHub Pages (one-time)
+
+1. Push to GitHub:
+   ```bash
+   git remote add origin git@github.com:<owner>/<repo>.git
+   git push -u origin main
+   ```
+
+2. Create the `gh-pages` branch (required before enabling Pages):
+   ```bash
+   git checkout --orphan gh-pages
+   echo "deploying" > index.html
+   git add index.html && git commit -m "init" && git push origin gh-pages
+   git checkout main
+   ```
+
+3. Enable Pages in repo settings:
+   - Go to **Settings → Pages**
+   - Source: **Deploy from a branch**
+   - Branch: **gh-pages**, Folder: **/ (root)**
+   - Click Save
+
+4. Wait ~2 minutes for first deployment, then your site is live at:
+   `https://<owner>.github.io/<repo>/`
+
+### Important: Vite base path
+
+The `base` in `vite.config.ts` must match your repo name:
+```ts
+base: "/<repo-name>/",  // e.g., "/powerup/" for ljlabs/powerup
+```
+
+If this is wrong, assets will 404 on GitHub Pages.
+
+### What NOT to do
+
+- **Don't set Pages source to `main` branch** — the website needs to be built first, and it lives in `website/`. Serving raw `main` gives you source code, not a working site.
+- **Don't use "GitHub Actions" as Pages source** unless you're using `actions/upload-pages-artifact` + `actions/deploy-pages`. The `peaceiris/actions-gh-pages` approach pushes to a branch, so use "Deploy from a branch".
+- **Don't use Windows backslashes in npm scripts** — CI runs on Linux. Let the script use its own default path resolution.
 
 ## Customization
 
@@ -135,14 +179,6 @@ The scaffolded components are intentionally minimal — clean structure with TOD
 - `src/pages/GalleryPage.tsx` — skill gallery/listing
 - `src/styles/` — Tailwind theme and custom styles
 
-## Issues encountered and resolved
-
-- **Monorepo mode support**: Implemented `--monorepo` flag to allow skills at workspace root with website in subdirectory
-- **Manifest generator path**: Configurable via `--skills-dir` argument to handle both single-repo and monorepo setups
-- **GitHub Actions workflow**: Includes proper `working-directory` configuration for monorepo mode
-- **Root project files**: Auto-generates root README.md and .gitignore when using monorepo mode
-- **Skill documentation**: Creates skills/README.md explaining the skill format in monorepo mode
-
 ## Troubleshooting
 
 **If the website directory is empty after running the skill:**
@@ -154,3 +190,8 @@ The scaffolded components are intentionally minimal — clean structure with TOD
 **If manifest generation fails:**
 - Ensure the `skills/` directory contains skill folders with `SKILL.md` files
 - For monorepo mode, verify the skills path is correct (default: `../skills` relative to website)
+
+**If GitHub Pages shows 404 after first deploy:**
+- Check that the `gh-pages` branch exists and has the built files
+- Verify Pages source is set to `gh-pages` branch in repo settings
+- Check that `base` in `vite.config.ts` matches your repo name exactly
