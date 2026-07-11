@@ -63,11 +63,12 @@ const workspaceRoot = args.monorepo ? path.resolve(targetDir, "..") : targetDir;
 const skillsAbsDir = path.resolve(workspaceRoot, args.skillsDir);
 
 // How far the manifest generator (inside website/) must look to find skills.
-// Single:  ./skills         (../skills relative to scripts/)
-// Mono:    ../skillsDir     (../../skillsDir relative to scripts/)
+// Uses forward slashes (universal on all platforms via Node.js)
+// Single:  ../skills         (relative from website/scripts/)
+// Mono:    ../skillsDir      (relative from website/scripts/)
 const manifestSkillsRel = args.monorepo
-  ? path.join("..", args.skillsDir)
-  : path.join("..", "skills");
+  ? `../${args.skillsDir}`
+  : "../skills";
 
 // ---------------------------------------------------------------------------
 // File templates
@@ -91,11 +92,11 @@ function writeFileAt(baseDir, relPath, content) {
 
 function pkgJson() {
   const buildScript = args.monorepo
-    ? `node scripts/generate-manifest.js --skills-dir ${manifestSkillsRel} && tsc -b && vite build`
+    ? `node scripts/generate-manifest.js --skills-dir ../${args.skillsDir} && tsc -b && vite build`
     : `node scripts/generate-manifest.js && tsc -b && vite build`;
 
   const genManifestScript = args.monorepo
-    ? `node scripts/generate-manifest.js --skills-dir ${manifestSkillsRel}`
+    ? `node scripts/generate-manifest.js --skills-dir ../${args.skillsDir}`
     : `node scripts/generate-manifest.js`;
 
   return JSON.stringify({
@@ -275,27 +276,33 @@ function srcTypes() {
 `;
 }
 
+/**
+ * FIXED: Use array-join pattern to preserve TypeScript type annotations.
+ * Template literals can corrupt colons in type signatures like (data: SkillMeta[]).
+ * By using discrete string lines, each colon is in its own literal and cannot be lost.
+ */
 function srcHooksUseSkills() {
-  return `import { useState, useEffect } from "react";
-import type { SkillMeta } from "../types";
-
-export function useSkills() {
-  const [skills, setSkills] = useState<SkillMeta[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("skills-manifest.json")
-      .then((r) => r.json())
-      .then((data: SkillMeta[]) => {
-        setSkills(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
-
-  return { skills, loading };
-}
-`;
+  return [
+    'import { useState, useEffect } from "react";',
+    'import type { SkillMeta } from "../types";',
+    '',
+    'export function useSkills() {',
+    '  const [skills, setSkills] = useState<SkillMeta[]>([]);',
+    '  const [loading, setLoading] = useState(true);',
+    '',
+    '  useEffect(() => {',
+    '    fetch("skills-manifest.json")',
+    '      .then((r) => r.json())',
+    '      .then((data: SkillMeta[]) => {',
+    '        setSkills(data);',
+    '        setLoading(false);',
+    '      })',
+    '      .catch(() => setLoading(false));',
+    '  }, []);',
+    '',
+    '  return { skills, loading };',
+    '}',
+  ].join('\n');
 }
 
 function srcComponentsLayout() {
@@ -338,19 +345,20 @@ export default function SkillCard({ skill }: Props) {
   return (
     <Link
       to={\`/skills/\${skill.slug}\`}
-      className="block rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
+      className="p-4 border border-gray-200 rounded-lg hover:shadow-lg transition"
     >
-      <h3 className="text-lg font-semibold">{skill.name}</h3>
-      <p className="mt-2 text-gray-600 text-sm">{skill.description}</p>
-      {skill.tags.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-1">
-          {skill.tags.map((tag) => (
-            <span key={tag} className="text-xs bg-gray-100 rounded px-2 py-1">
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
+      <h3 className="font-semibold">{skill.name}</h3>
+      <p className="text-sm text-gray-600">{skill.description}</p>
+      <div className="mt-3 flex gap-1">
+        {skill.tags.map((tag) => (
+          <span
+            key={tag}
+            className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
     </Link>
   );
 }
@@ -367,17 +375,28 @@ interface Props {
 // TODO: Replace with your mock detail design
 export default function SkillDetail({ skill }: Props) {
   return (
-    <div>
-      <h1 className="text-2xl font-bold">{skill.name}</h1>
-      <p className="mt-2 text-gray-600">{skill.description}</p>
-      <div className="mt-4">
-        <h2 className="text-sm font-semibold uppercase text-gray-500">Files</h2>
-        <ul className="mt-1 list-disc list-inside text-sm text-gray-700">
-          {skill.files.map((f) => (
-            <li key={f}>{f}</li>
-          ))}
-        </ul>
+    <div className="prose max-w-3xl">
+      <h1>{skill.name}</h1>
+      <p className="text-lg text-gray-600">{skill.description}</p>
+
+      <h2>Tags</h2>
+      <div className="flex gap-2">
+        {skill.tags.map((tag) => (
+          <span
+            key={tag}
+            className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+          >
+            {tag}
+          </span>
+        ))}
       </div>
+
+      <h2>Files</h2>
+      <ul>
+        {skill.files.map((file) => (
+          <li key={file}>{file}</li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -387,20 +406,25 @@ export default function SkillDetail({ skill }: Props) {
 function srcPagesHomePage() {
   return `import { Link } from "react-router-dom";
 
-// TODO: Replace with your mock landing page design
+// TODO: Replace with your mock home page design
 export default function HomePage() {
   return (
-    <div className="max-w-2xl">
-      <h1 className="text-3xl font-bold">Claude Skills</h1>
-      <p className="mt-4 text-gray-600">
-        A curated collection of skills for Claude.
-      </p>
-      <Link
-        to="/skills"
-        className="inline-block mt-6 px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors"
-      >
-        Browse Skills
-      </Link>
+    <div className="space-y-8">
+      <section className="text-center">
+        <h1 className="text-4xl font-bold">Claude Skills</h1>
+        <p className="text-xl text-gray-600 mt-2">
+          A collection of skills for Claude Code
+        </p>
+      </section>
+
+      <div className="text-center">
+        <Link
+          to="/skills"
+          className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700"
+        >
+          Browse Skills
+        </Link>
+      </div>
     </div>
   );
 }
@@ -408,21 +432,21 @@ export default function HomePage() {
 }
 
 function srcPagesGalleryPage() {
-  return `import SkillCard from "../components/SkillCard";
-import { useSkills } from "../hooks/useSkills";
+  return `import { useSkills } from "../hooks/useSkills";
+import SkillCard from "../components/SkillCard";
 
 // TODO: Replace with your mock gallery design
 export default function GalleryPage() {
   const { skills, loading } = useSkills();
 
   if (loading) {
-    return <p className="text-gray-500">Loading skills...</p>;
+    return <div className="text-center py-12">Loading skills...</div>;
   }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">All Skills</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <h1 className="text-3xl font-bold mb-8">Skills Gallery</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {skills.map((skill) => (
           <SkillCard key={skill.slug} skill={skill} />
         ))}
@@ -434,26 +458,43 @@ export default function GalleryPage() {
 }
 
 function srcPagesSkillPage() {
-  return `import { useParams } from "react-router-dom";
-import SkillDetail from "../components/SkillDetail";
+  return `import { useParams, useNavigate } from "react-router-dom";
 import { useSkills } from "../hooks/useSkills";
+import SkillDetail from "../components/SkillDetail";
 
-// TODO: Replace with your mock detail page design
+// TODO: Replace with your mock skill detail page design
 export default function SkillPage() {
-  const { slug } = useParams<{ slug: string }>();
-  const { skills, loading } = useSkills();
-
-  if (loading) {
-    return <p className="text-gray-500">Loading...</p>;
-  }
+  const { slug } = useParams();
+  const navigate = useNavigate();
+  const { skills } = useSkills();
 
   const skill = skills.find((s) => s.slug === slug);
 
   if (!skill) {
-    return <p className="text-gray-500">Skill not found.</p>;
+    return (
+      <div className="text-center py-12">
+        <p className="text-lg text-gray-600 mb-4">Skill not found</p>
+        <button
+          onClick={() => navigate("/skills")}
+          className="text-blue-600 hover:underline"
+        >
+          Back to gallery
+        </button>
+      </div>
+    );
   }
 
-  return <SkillDetail skill={skill} />;
+  return (
+    <div>
+      <button
+        onClick={() => navigate("/skills")}
+        className="text-blue-600 hover:underline mb-6"
+      >
+        ← Back to gallery
+      </button>
+      <SkillDetail skill={skill} />
+    </div>
+  );
 }
 `;
 }
@@ -462,149 +503,167 @@ function srcStylesIndex() {
   return `@tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
 `;
 }
 
 // -- GitHub Actions workflow ------------------------------------------------
 
+/**
+ * FIXED: Properly handle working-directory for monorepo mode.
+ * Single-repo mode: build in project root, artifact path is dist/
+ * Monorepo mode: build in website/ subdirectory, artifact path is website/dist
+ */
 function deployWorkflow() {
-  const workingDir = args.monorepo ? "    working-directory: website\n" : "";
+  const workingDir = args.monorepo ? "      working-directory: website\n" : "";
   const uploadPath = args.monorepo ? "      path: website/dist" : "      path: dist";
+  const cacheDepPath = args.monorepo ? "website/package-lock.json" : "package-lock.json";
 
-  return `name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-${workingDir}
-      - run: npm ci
-      - run: npm run build
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-${uploadPath}
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: \${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
-`;
+  return [
+    'name: Deploy to GitHub Pages',
+    '',
+    'on:',
+    '  push:',
+    '    branches: [main]',
+    '  workflow_dispatch:',
+    '',
+    'permissions:',
+    '  contents: read',
+    '  pages: write',
+    '  id-token: write',
+    '',
+    'concurrency:',
+    '  group: pages',
+    '  cancel-in-progress: false',
+    '',
+    'jobs:',
+    '  build:',
+    '    runs-on: ubuntu-latest',
+    '    steps:',
+    '      - uses: actions/checkout@v4',
+    '',
+    '      - uses: actions/setup-node@v4',
+    '        with:',
+    '          node-version: 20',
+    '          cache: npm',
+    `          cache-dependency-path: ${cacheDepPath}`,
+    '',
+    workingDir.trim() ? `${workingDir}      - run: npm ci` : '      - run: npm ci',
+    workingDir.trim() ? `${workingDir}      - run: npm run build` : '      - run: npm run build',
+    '',
+    '      - uses: actions/upload-pages-artifact@v3',
+    '        with:',
+    `${uploadPath}`,
+    '',
+    '  deploy:',
+    '    needs: build',
+    '    runs-on: ubuntu-latest',
+    '    environment:',
+    '      name: github-pages',
+    '      url: ${{ steps.deployment.outputs.page_url }}',
+    '    steps:',
+    '      - id: deployment',
+    '        uses: actions/deploy-pages@v4',
+  ].join('\n');
 }
 
 // -- Generate manifest script -----------------------------------------------
 
-function generateManifestScript() {
-  return `#!/usr/bin/env node
-
 /**
- * Scans skills/ for folders containing SKILL.md, extracts frontmatter,
- * and writes public/skills-manifest.json.
- *
- * Usage:
- *   node generate-manifest.js [--skills-dir <path>]
- *
- * If --skills-dir is not provided, defaults to ./skills (relative to the website root).
+ * FIXED: Use array-join pattern to preserve special characters in template strings.
+ * Template literals can corrupt escape sequences and special characters.
+ * By using discrete string lines, we avoid these issues.
  */
-
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-// Parse --skills-dir argument
-const args = process.argv.slice(2);
-let skillsDirArg = "";
-for (let i = 0; i < args.length; i++) {
-  if (args[i] === "--skills-dir" && i + 1 < args.length) {
-    skillsDirArg = args[++i];
-  }
-}
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const WEBSITE_ROOT = path.resolve(__dirname, "..");
-const SKILLS_DIR = skillsDirArg
-  ? path.resolve(WEBSITE_ROOT, skillsDirArg)
-  : path.join(WEBSITE_ROOT, "skills");
-const OUT = path.join(WEBSITE_ROOT, "public", "skills-manifest.json");
-
-function parseFrontmatter(content) {
-  const match = content.match(/^---\\n([\\s\\S]*?)\\n---/);
-  if (!match) return {};
-  const meta = {};
-  for (const line of match[1].split("\\n")) {
-    const [key, ...rest] = line.split(":");
-    if (key && rest.length) {
-      let val = rest.join(":").trim();
-      if (val.startsWith("[") && val.endsWith("]")) {
-        val = val.slice(1, -1).split(",").map((s) => s.trim()).filter(Boolean);
-      }
-      meta[key.trim()] = val;
-    }
-  }
-  return meta;
-}
-
-function scanSkills() {
-  if (!fs.existsSync(SKILLS_DIR)) {
-    console.log("No skills/ directory found. Creating empty manifest.");
-    return [];
-  }
-
-  const skills = [];
-  for (const entry of fs.readdirSync(SKILLS_DIR, { withFileTypes: true })) {
-    if (!entry.isDirectory()) continue;
-    const skillFile = path.join(SKILLS_DIR, entry.name, "SKILL.md");
-    if (!fs.existsSync(skillFile)) continue;
-
-    const content = fs.readFileSync(skillFile, "utf-8");
-    const meta = parseFrontmatter(content);
-
-    const files = fs.readdirSync(path.join(SKILLS_DIR, entry.name), { recursive: true })
-      .map((f) => f.toString());
-
-    skills.push({
-      slug: entry.name,
-      name: meta.name || entry.name,
-      description: meta.description || "",
-      tags: Array.isArray(meta.tags) ? meta.tags : [],
-      files,
-    });
-  }
-
-  return skills.sort((a, b) => a.name.localeCompare(b.name));
-}
-
-console.log(\`Scanning skills from: \${SKILLS_DIR}\`);
-const skills = scanSkills();
-fs.mkdirSync(path.dirname(OUT), { recursive: true });
-fs.writeFileSync(OUT, JSON.stringify(skills, null, 2) + "\\n");
-console.log(\`Wrote \${skills.length} skills to \${path.relative(process.cwd(), OUT)}\`);
-`;
+function generateManifestScript() {
+  return [
+    '#!/usr/bin/env node',
+    '',
+    '/**',
+    ' * Scans skills/ for folders containing SKILL.md, extracts frontmatter,',
+    ' * and writes public/skills-manifest.json.',
+    ' *',
+    ' * Usage:',
+    ' *   node generate-manifest.js [--skills-dir <path>]',
+    ' *',
+    ' * If --skills-dir is not provided, defaults to ./skills (relative to the website root).',
+    ' */',
+    '',
+    'import fs from "node:fs";',
+    'import path from "node:path";',
+    'import { fileURLToPath } from "node:url";',
+    '',
+    '// Parse --skills-dir argument',
+    'const args = process.argv.slice(2);',
+    'let skillsDirArg = "";',
+    'for (let i = 0; i < args.length; i++) {',
+    '  if (args[i] === "--skills-dir" && i + 1 < args.length) {',
+    '    skillsDirArg = args[++i];',
+    '  }',
+    '}',
+    '',
+    'const __dirname = path.dirname(fileURLToPath(import.meta.url));',
+    'const WEBSITE_ROOT = path.resolve(__dirname, "..");',
+    'const SKILLS_DIR = skillsDirArg',
+    '  ? path.resolve(WEBSITE_ROOT, skillsDirArg)',
+    '  : path.join(WEBSITE_ROOT, "skills");',
+    'const OUT = path.join(WEBSITE_ROOT, "public", "skills-manifest.json");',
+    '',
+    'function parseFrontmatter(content) {',
+    '  const match = content.match(/^---\\n([\\s\\S]*?)\\n---/);',
+    '  if (!match) return {};',
+    '  const meta = {};',
+    '  for (const line of match[1].split("\\n")) {',
+    '    const [key, ...rest] = line.split(":");',
+    '    if (key && rest.length) {',
+    '      let val = rest.join(":").trim();',
+    '      if (val.startsWith("[") && val.endsWith("]")) {',
+    '        val = val.slice(1, -1).split(",").map((s) => s.trim()).filter(Boolean);',
+    '      }',
+    '      meta[key.trim()] = val;',
+    '    }',
+    '  }',
+    '  return meta;',
+    '}',
+    '',
+    'function scanSkills() {',
+    '  if (!fs.existsSync(SKILLS_DIR)) {',
+    '    console.log("No skills/ directory found. Creating empty manifest.");',
+    '    return [];',
+    '  }',
+    '',
+    '  const skills = [];',
+    '  for (const entry of fs.readdirSync(SKILLS_DIR, { withFileTypes: true })) {',
+    '    if (!entry.isDirectory()) continue;',
+    '    const skillFile = path.join(SKILLS_DIR, entry.name, "SKILL.md");',
+    '    if (!fs.existsSync(skillFile)) continue;',
+    '',
+    '    const content = fs.readFileSync(skillFile, "utf-8");',
+    '    const meta = parseFrontmatter(content);',
+    '',
+    '    const files = fs.readdirSync(path.join(SKILLS_DIR, entry.name), { recursive: true })',
+    '      .map((f) => f.toString());',
+    '',
+    '    skills.push({',
+    '      slug: entry.name,',
+    '      name: meta.name || entry.name,',
+    '      description: meta.description || "",',
+    '      tags: Array.isArray(meta.tags) ? meta.tags : [],',
+    '      files,',
+    '    });',
+    '  }',
+    '',
+    '  return skills.sort((a, b) => a.name.localeCompare(b.name));',
+    '}',
+    '',
+    'console.log(`Scanning skills from: ${SKILLS_DIR}`);',
+    'const skills = scanSkills();',
+    'fs.mkdirSync(path.dirname(OUT), { recursive: true });',
+    'fs.writeFileSync(OUT, JSON.stringify(skills, null, 2) + "\\n");',
+    'console.log(`Wrote ${skills.length} skills to ${path.relative(process.cwd(), OUT)}`);',
+  ].join('\n');
 }
 
 // -- Sample skill for demo --------------------------------------------------
@@ -732,7 +791,7 @@ writeFileAt(skillsAbsDir, "example-skill/SKILL.md", sampleSkill());
 if (args.monorepo) {
   writeFileAt(workspaceRoot, "README.md", rootReadme(args.repoName));
   writeFileAt(workspaceRoot, ".gitignore", rootGitignore());
-  writeFileAt(skillsAbsDir, "README.md", `# Skills\n\nThis folder contains the skills displayed on the ${args.repoName} website.\n\n## Adding a skill\n\nEach skill lives in its own folder with a \`SKILL.md\` file containing YAML frontmatter:\n\n\`\`\`markdown\n---\nname: my-skill\n description: What this skill does\ntags: [category1, category2]\n---\n\n# My Skill\n\nSkill documentation here...\n\`\`\`\n\nAfter adding or updating skills, regenerate the manifest:\n\n\`\`\`bash\ncd ../website\nnpm run generate-manifest\n\`\`\`\n`);
+  writeFileAt(skillsAbsDir, "README.md", `# Skills\n\nThis folder contains the skills displayed on the ${args.repoName} website.\n\n## Adding a skill\n\nEach skill lives in its own folder with a \`SKILL.md\` file containing YAML frontmatter:\n\n\`\`\`markdown\n---\nname: my-skill\ndescription: What this skill does\ntags: [category1, category2]\n---\n\n# My Skill\n\nSkill documentation here...\n\`\`\`\n\nAfter adding or updating skills, regenerate the manifest:\n\n\`\`\`bash\ncd ../website\nnpm run generate-manifest\n\`\`\`\n`);
 }
 
 const cdPath = args.monorepo ? `${path.relative(process.cwd(), targetDir) || "."}` : path.relative(process.cwd(), targetDir) || ".";
