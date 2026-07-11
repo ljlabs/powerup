@@ -4,7 +4,7 @@ import Footer from "./layout/Footer";
 
 interface Props {
   children: ReactNode;
-  currentPage?: "home" | "library";
+  currentPage?: "home" | "library" | "docs";
 }
 
 export default function Layout({ children, currentPage = "home" }: Props) {

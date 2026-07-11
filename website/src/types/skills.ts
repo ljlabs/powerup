@@ -9,14 +9,24 @@ export interface SkillMeta {
   description: string;
   tags: string[];
   files: string[];
+  category?: string;
+  language?: string;
+  complexity?: string;
   author?: string;
   version?: string;
   icon?: string;
+  repo?: string;
+  color?: string;
+  stars?: number;
+  downloads?: number;
+  rating?: number;
+  featured?: boolean;
+  imageUrl?: string;
+  backgroundColor?: string;
   readme?: string;
   features?: string[];
   useCommand?: string;
   skillFiles?: SkillFile[];
-  category?: string;
 }
 
 /** File information for the code viewer */
@@ -24,7 +34,9 @@ export interface SkillFile {
   name: string;
   size: string;
   lastModified: string;
-  content: string;
+  content: string | null;
+  isBinary?: boolean;
+  url?: string;
 }
 
 /** Category for browsing */

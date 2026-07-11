@@ -1,4 +1,6 @@
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import type { SkillMeta, SkillFile } from "../types";
 
 interface Props {
@@ -91,12 +93,14 @@ export default function SkillDetail({ skill }: Props) {
       {/* Tab Content */}
       {hasDetail && activeTab === "overview" && (
         <div className="bg-white border-2 border-on-background rounded-2xl shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] p-8 max-w-4xl">
-          <article className="prose prose-slate max-w-none">
+          <article className="prose prose-slate max-w-none prose-headings:text-on-background prose-a:text-tertiary prose-strong:text-on-background prose-code:text-tertiary prose-code:bg-surface-container prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-on-background prose-pre:text-surface-container-lowest prose-th:border-2 prose-th:border-on-background prose-td:border-2 prose-td:border-on-background">
             <h2 className="font-headline-md text-headline-md mb-4">README.md</h2>
             {skill.readme && (
-              <p className="font-body-lg text-body-lg text-secondary mb-6 leading-relaxed whitespace-pre-line">
-                {skill.readme}
-              </p>
+              <div className="font-body-lg text-body-lg text-secondary mb-6 leading-relaxed">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {skill.readme}
+                </ReactMarkdown>
+              </div>
             )}
             {skill.features && skill.features.length > 0 && (
               <>
@@ -115,14 +119,20 @@ export default function SkillDetail({ skill }: Props) {
                 </ul>
               </>
             )}
-            {skill.useCommand && (
-              <div className="bg-surface-container p-6 rounded-xl border-2 border-dashed border-on-background mb-6">
-                <h4 className="font-label-bold mb-2">How to Use</h4>
-                <code className="block font-mono text-sm bg-on-background text-white p-3 rounded-lg">
-                  {skill.useCommand}
-                </code>
-              </div>
-            )}
+            <div className="bg-surface-container p-6 rounded-xl border-2 border-dashed border-on-background mb-6">
+              <h4 className="font-label-bold mb-3">How to Install</h4>
+              <ol className="space-y-2 font-body-md list-decimal list-inside">
+                <li>Click the <strong>Download Skill</strong> button above</li>
+                <li>Extract the downloaded folder to your Claude skills directory:</li>
+              </ol>
+              <code className="block font-mono text-sm bg-on-background text-white p-3 rounded-lg mt-3 mb-3">
+                ~/.claude/skills/{skill.slug || "skill-name"}/
+              </code>
+              <ol className="space-y-2 font-body-md list-decimal list-inside" start={3}>
+                <li>Restart Claude to load the new skill</li>
+                <li>The skill will now be available in your Claude workflows</li>
+              </ol>
+            </div>
           </article>
         </div>
       )}
@@ -168,13 +178,15 @@ export default function SkillDetail({ skill }: Props) {
               </thead>
               <tbody className="divide-y-2 divide-surface-variant">
                 {skill.skillFiles.map((file) => {
-                  const ext = file.name.split(".").pop();
+                  const ext = file.name.split(".").pop()?.toLowerCase();
                   const iconName =
-                    ext === "md"
-                      ? "description"
-                      : ext === "json"
-                        ? "settings"
-                        : "code";
+                    file.isBinary
+                      ? "image"
+                      : ext === "md"
+                        ? "description"
+                        : ext === "json"
+                          ? "settings"
+                          : "code";
                   return (
                     <tr
                       key={file.name}
@@ -220,21 +232,34 @@ export default function SkillDetail({ skill }: Props) {
                   <span className="font-mono text-sm text-surface-container-lowest">
                     {selectedFile.name}
                   </span>
-                  <button
-                    className="flex items-center gap-2 px-4 py-2 bg-surface-container rounded-lg font-label-bold text-on-background border-2 border-on-background active:translate-y-0.5 transition-all"
-                    onClick={() =>
-                      navigator.clipboard.writeText(selectedFile.content)
-                    }
-                  >
-                    <span className="material-symbols-outlined !text-sm">
-                      content_copy
-                    </span>{" "}
-                    Copy Raw Code
-                  </button>
+                  {selectedFile.content && (
+                    <button
+                      className="flex items-center gap-2 px-4 py-2 bg-surface-container rounded-lg font-label-bold text-on-background border-2 border-on-background active:translate-y-0.5 transition-all"
+                      onClick={() =>
+                        navigator.clipboard.writeText(selectedFile.content!)
+                      }
+                    >
+                      <span className="material-symbols-outlined !text-sm">
+                        content_copy
+                      </span>{" "}
+                      Copy Raw Code
+                    </button>
+                  )}
                 </div>
-                <pre className="p-6 overflow-x-auto text-sm font-mono leading-relaxed">
-                  <code className="text-[#f1f1f1]">{selectedFile.content}</code>
-                </pre>
+                {selectedFile.content ? (
+                  <pre className="p-6 overflow-x-auto text-sm font-mono leading-relaxed">
+                    <code className="text-[#f1f1f1]">{selectedFile.content}</code>
+                  </pre>
+                ) : (
+                  <div className="p-6 text-center">
+                    <span className="material-symbols-outlined !text-4xl text-surface-container-lowest/50 mb-2">
+                      image
+                    </span>
+                    <p className="font-body-md text-surface-container-lowest/70">
+                      Binary file — preview not available
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           )}
