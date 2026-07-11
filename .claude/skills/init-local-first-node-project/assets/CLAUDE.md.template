@@ -1,0 +1,26 @@
+# CLAUDE.md — Local-First Node Project
+
+## Project Purpose
+<!-- CLAUDE: replace this with the real description of what the user is building
+     and who/what it's for, based on what they told you at scaffold time. -->
+{{DESCRIPTION}}
+
+## Architecture Notes
+<!-- CLAUDE: fill in the actual API routes, UI views, and shared types you
+     expect to need, based on the real request. Keep this current as it grows. -->
+- `packages/shared-types/` — the contract. Every API request/response shape lives here, imported by both `server` and `web`. Never redefine a type independently on either side.
+- `packages/server/` — Express + TS. Serves `/api/*` AND the built `web/dist` static files on one port.
+- `packages/web/` — Vite + React + TS. Dev mode proxies `/api` to the server port from `.env`.
+- Default port: {{DEFAULT_PORT}} (via `.env`, overridable per-instance to avoid collisions with other local tools running at once).
+
+## Working Rules
+
+- **Single port, no exceptions.** `npm run start` must serve both the UI and the API on one port. Never introduce a second port for "just the API" in the packaged/prod build.
+- **Port comes from `.env`.** Don't hardcode ports anywhere in source.
+- When adding a new API endpoint: add its request/response types to `packages/shared-types` first, then implement server + client against that shared type. Don't let `server` and `web` drift on the contract.
+- Keep the Dockerfile's multi-stage build working — test `docker compose up --build` after significant dependency or build-script changes.
+- Don't `git commit` without being asked.
+
+## Debugging Log Protocol
+
+If you get stuck in a debugging loop and eventually resolve it, append an entry to `rules/` with: the symptom, what failed and why, and what actually fixed it. Keep entries short and factual — this is project-local memory so future sessions don't repeat dead ends. See root `~/.claude/CLAUDE.md` for the full protocol.

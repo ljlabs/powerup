@@ -1,0 +1,27 @@
+# CLAUDE.md — Website Project
+
+## Project Purpose
+<!-- CLAUDE: replace this with the real description of what the user is building
+     (pages, key flows, who it's for), based on what they told you at scaffold time. -->
+{{DESCRIPTION}}
+
+## Architecture Notes
+<!-- CLAUDE: fill in the actual Firestore collections, auth model, and Functions
+     you expect to need, based on the real request. Keep this current as it grows. -->
+- `web/` — Vite + React + TypeScript frontend
+- `functions/` — Firebase Functions backend (TypeScript)
+- `firestore.rules` — currently default-deny; open up per-collection as schema is defined
+- Auth: not yet wired to a provider — decide (email/password, Google, etc.) based on the product
+
+## Working Rules
+
+- **Single test stack**: Jest for both `web/` and `functions/` unit tests. Playwright for e2e. Don't introduce Vitest or another runner.
+- Run `npm run test` (unit, both workspaces) and `npm run test:e2e` (Playwright) before considering a feature done.
+- Use the Firebase emulator suite (`npm run emulators`) for local dev against Firestore/Auth/Functions — never point dev at a live Firebase project.
+- Keep Firestore rules default-deny until a collection's access pattern is actually decided; don't leave rules wide open "temporarily."
+- Don't run `firebase deploy` or create a live Firebase project unless the user explicitly asks.
+- Don't `git commit` without being asked.
+
+## Debugging Log Protocol
+
+If you get stuck in a debugging loop and eventually resolve it, append an entry to `rules/` with: the symptom, what failed and why, and what actually fixed it. Keep entries short and factual — this is project-local memory so future sessions don't repeat dead ends. See root `~/.claude/CLAUDE.md` for the full protocol.

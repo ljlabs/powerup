@@ -1,0 +1,31 @@
+# CLAUDE.md — {{PACKAGE_NAME}}
+
+## Project Purpose
+<!-- CLAUDE: replace this with a real description of what the user is building,
+     based on what they told you when this project was scaffolded. -->
+{{DESCRIPTION}}
+
+## Architecture Notes
+<!-- CLAUDE: fill this in with the actual planned structure/modules once you
+     know more about the request. Keep it current as the project grows. -->
+- `src/{{PACKAGE_NAME}}/` — main package (src-layout)
+- `tests/unit/` — unit tests
+- `tests/integration/` — integration tests (add as needed)
+
+## Working Rules
+
+- Use the venv at `.venv/`. Never install packages globally.
+- Run tests with `pytest` before considering any change done.
+- Keep `pyproject.toml` as the single source of truth for dependencies — no `requirements.txt`.
+- Prefer small, composable functions/modules over large files.
+- Type-hint everything; `mypy --strict` should stay clean.
+- Don't `git commit` without being asked, unless the user has told you to commit at natural checkpoints.
+
+## Debugging Log Protocol
+
+If you get stuck in a debugging loop (multiple failed attempts at the same problem) and eventually resolve it, append an entry to `rules/` describing:
+- What the symptom was
+- What approaches failed and why
+- What actually fixed it
+
+Keep entries short and factual. This is a project-local memory so future sessions don't repeat the same dead ends. See root `~/.claude/CLAUDE.md` for the full protocol.
