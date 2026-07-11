@@ -34,7 +34,7 @@ export default function CTABanner() {
           Help us improve by filing an issue on GitHub with details about what went wrong.
         </p>
         <a
-          href="https://github.com/anthropics/claude-code/issues"
+          href="https://github.com/ljlabs/powerup/issues"
           target="_blank"
           rel="noopener noreferrer"
           className="w-full bg-on-background text-white py-3 rounded-xl font-label-bold hover:translate-y-1 transition-all"

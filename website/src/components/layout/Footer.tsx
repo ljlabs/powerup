@@ -18,13 +18,15 @@ export default function Footer({ className = "" }: Props) {
       <div className="flex gap-10">
         <a
           className="text-secondary hover:text-primary transition-colors"
-          href="#"
+          href="https://github.com/ljlabs/powerup"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           GitHub
         </a>
         <a
           className="text-secondary hover:text-primary transition-colors"
-          href="#"
+          href="#/docs"
         >
           Documentation
         </a>

@@ -122,7 +122,7 @@ export default function DocsPage() {
             <ButtonSecondary size="md">Browse Skills</ButtonSecondary>
           </Link>
           <a
-            href="https://github.com/anthropics/claude-code/issues"
+            href="https://github.com/ljlabs/powerup/issues"
             target="_blank"
             rel="noopener noreferrer"
           >

@@ -39,7 +39,7 @@ describe("CTABanner", () => {
       </MemoryRouter>
     );
     const link = screen.getByText("Open an Issue");
-    expect(link).toHaveAttribute("href", "https://github.com/anthropics/claude-code/issues");
+    expect(link).toHaveAttribute("href", "https://github.com/ljlabs/powerup/issues");
     expect(link).toHaveAttribute("target", "_blank");
   });
 

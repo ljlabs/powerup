@@ -32,10 +32,12 @@ export default function HeroSection({ onSearch }: Props) {
 
       <div className="md:w-2/5 flex justify-center relative">
         <div className="relative z-10 w-72 h-72 md:w-96 md:h-96 bg-accent-mint border-4 border-on-background rounded-2xl shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] flex items-center justify-center">
-          <div className="w-4/5 h-4/5 rounded-xl bg-white border-2 border-on-background flex items-center justify-center">
-            <span className="material-symbols-outlined !text-8xl text-on-background">
-              smart_toy
-            </span>
+          <div className="w-4/5 h-4/5 rounded-xl bg-white border-2 border-on-background flex items-center justify-center overflow-hidden">
+            <img
+              src="/favicon.png"
+              alt="Claude Skills"
+              className="w-full h-full object-contain p-2"
+            />
           </div>
         </div>
         <div className="absolute -top-4 -right-4 w-24 h-24 bg-brand-yellow border-4 border-on-background rounded-full shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] z-0 animate-bounce" />

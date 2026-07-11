@@ -69,7 +69,7 @@ export default function SkillDetail({ skill }: Props) {
 
       {/* Tabs Navigation */}
       {hasDetail && (
-        <nav className="flex gap-4 border-b-2 border-on-background mb-12">
+        <nav className="flex gap-4 border-b-2 border-on-background mb-4 mt-4">
           <button
             className={`flex items-center gap-2 px-6 py-3 font-label-bold border-t-2 border-l-2 border-r-2 border-on-background rounded-t-xl transition-all ${
               activeTab === "overview"

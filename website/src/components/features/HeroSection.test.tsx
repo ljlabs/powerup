@@ -19,8 +19,9 @@ describe("HeroSection", () => {
     expect(screen.getByPlaceholderText("Search for tools, prompts, or agents...")).toBeInTheDocument();
   });
 
-  it("renders the robot illustration", () => {
+  it("renders the hero image", () => {
     render(<HeroSection />);
-    expect(screen.getByText("smart_toy")).toBeInTheDocument();
+    const img = screen.getByAltText("Claude Skills");
+    expect(img).toHaveAttribute("src", "/favicon.png");
   });
 });
