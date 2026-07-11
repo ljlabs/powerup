@@ -16,7 +16,7 @@ function renderWithRoute(slug: string) {
 describe("SkillPage", () => {
   it("renders the vector-store skill detail", () => {
     renderWithRoute("vector-store");
-    expect(screen.getByText("Vector Store")).toBeInTheDocument();
+    expect(screen.getAllByText("Vector Store")).toHaveLength(2);
     expect(screen.getByText("anthropic-labs")).toBeInTheDocument();
     expect(screen.getByText("v1.2.4")).toBeInTheDocument();
   });
@@ -29,13 +29,13 @@ describe("SkillPage", () => {
 
   it("renders overview content with features", () => {
     renderWithRoute("vector-store");
-    expect(screen.getByText("Key Features")).toBeInTheDocument();
+    expect(screen.getAllByText("Key Features")).toHaveLength(2);
     expect(screen.getByText("Semantic search across large document collections")).toBeInTheDocument();
   });
 
   it("renders the web-search-mcp skill", () => {
     renderWithRoute("web-search-mcp");
-    expect(screen.getByText("Web Search MCP")).toBeInTheDocument();
+    expect(screen.getAllByText("Web Search MCP")).toHaveLength(2);
   });
 
   it("shows the 404 page for unknown slugs", () => {

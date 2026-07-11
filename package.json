@@ -1,0 +1,18 @@
+{
+  "name": "powerup",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "prepare": "husky install",
+    "preinstall": "echo 'Running preinstall...'",
+    "postinstall": "cd website && npm install",
+    "pre-commit": "npm run precommit:run",
+    "precommit:run": "cd website && npm run test && npm run build",
+    "test": "cd website && npm run test",
+    "build": "cd website && npm run build",
+    "dev": "cd website && npm run dev"
+  },
+  "devDependencies": {
+    "husky": "^9.0.0"
+  }
+}

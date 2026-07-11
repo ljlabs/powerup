@@ -28,10 +28,9 @@ describe("FeaturedSkillsGrid", () => {
         <FeaturedSkillsGrid />
       </MemoryRouter>
     );
+    expect(screen.getByText("Example Skill")).toBeInTheDocument();
+    expect(screen.getByText("Vector Store")).toBeInTheDocument();
     expect(screen.getByText("Web Search MCP")).toBeInTheDocument();
-    expect(screen.getByText("SVG Designer")).toBeInTheDocument();
-    expect(screen.getByText("Ghostwriter Agent")).toBeInTheDocument();
-    expect(screen.getByText("Python Data Visualizer")).toBeInTheDocument();
   });
 
   it("renders custom skills when provided", () => {

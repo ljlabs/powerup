@@ -37,6 +37,6 @@ describe("GalleryPage", () => {
         <GalleryPage />
       </MemoryRouter>
     );
-    expect(screen.getByText("Python Sandbox")).toBeInTheDocument();
+    expect(screen.getByText("Example Skill")).toBeInTheDocument();
   });
 });

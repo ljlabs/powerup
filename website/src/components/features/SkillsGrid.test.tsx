@@ -15,9 +15,9 @@ describe("SkillsGrid", () => {
 
   it("renders all default skills", () => {
     render(<SkillsGrid />);
-    expect(screen.getByText("Python Sandbox")).toBeInTheDocument();
-    expect(screen.getByText("Vector Store Connect")).toBeInTheDocument();
-    expect(screen.getByText("SVG Designer")).toBeInTheDocument();
+    expect(screen.getByText("Example Skill")).toBeInTheDocument();
+    expect(screen.getByText("Vector Store")).toBeInTheDocument();
+    expect(screen.getByText("Web Search MCP")).toBeInTheDocument();
   });
 
   it("renders custom skills when provided", () => {

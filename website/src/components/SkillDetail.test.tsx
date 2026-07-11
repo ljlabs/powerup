@@ -103,14 +103,14 @@ describe("SkillDetail", () => {
       expect(screen.getByText("Feature two")).toBeInTheDocument();
     });
 
-    it("shows How to Use section", () => {
+    it("shows How to Install section", () => {
       render(
         <MemoryRouter>
           <SkillDetail skill={detailedSkill} />
         </MemoryRouter>
       );
-      expect(screen.getByText("How to Use")).toBeInTheDocument();
-      expect(screen.getByText("npx @anthropic-labs/vector-store start")).toBeInTheDocument();
+      expect(screen.getByText("How to Install")).toBeInTheDocument();
+      expect(screen.getByText("Extract the downloaded folder to your Claude skills directory:")).toBeInTheDocument();
     });
 
     it("switches to Files tab and shows file list", () => {
