@@ -8,7 +8,8 @@ This is a **free, open-source collection of Claude Code skills** showcased via a
 ```
 powerup/
 ├── website/          # React + Vite website (deployed to GitHub Pages)
-├── skills/           # Skill definitions (SKILL.md frontmatter)
+├── skills/           # Skill definitions (SKILL.md frontmatter + source files)
+├── .github/workflows/deploy.yml  # GitHub Actions deployment
 ├── .claude/          # Claude Code skills and config
 └── rules/            # Debugging lessons learned
 ```
@@ -17,12 +18,53 @@ powerup/
 
 ## Architecture
 
+### Data Pipeline (How Skills Get to the Website)
+
+The pipeline has 3 stages: **skills/ folder → manifest → services → components**.
+
+```
+skills/
+  _categories.json        ← global config (skipped by scanner)
+  example-skill/
+    SKILL.md              ← frontmatter (metadata) + body (readme)
+    src/index.ts          ← source files (embedded in manifest)
+    logo.png              ← binary assets (copied to public/)
+    README.md
+  vector-store/
+    SKILL.md
+    ...
+        │
+        ▼
+  website/scripts/generate-manifest.js   ← Node.js build script
+        │
+        ▼
+  website/public/skills-manifest.json    ← single JSON array, all skills
+        │
+        ▼
+  website/src/data/skills.ts             ← imports manifest, transforms into 3 arrays
+  │  ├─ detailedSkills: SkillMeta[]      ← for SkillPage (full detail)
+  │  ├─ librarySkills: SkillCard[]       ← for GalleryPage (cards with stars/downloads)
+  │  └─ featuredSkills: FeaturedSkill[]  ← for HomePage (featured grid)
+        │
+        ▼
+  website/src/services/*.ts              ← import from data/skills.ts (unchanged)
+  │  ├─ skillService.ts    → getSkillBySlug() → SkillPage.tsx
+  │  ├─ libraryService.ts  → getAllLibrarySkills() → GalleryPage.tsx
+  │  └─ featuredService.ts → getAllFeaturedSkills() → FeaturedSkillsGrid.tsx
+        │
+        ▼
+  React components render the data
+```
+
+**Key insight:** The service layer never changed. We swapped the data source in one file (`data/skills.ts`) and the services, pages, and components all work automatically.
+
 ### Website (React + Vite + TypeScript + Tailwind)
 
 **Stack:**
 - React 19 + React Router 7 (HashRouter for GitHub Pages)
 - Vite 6 with TypeScript
-- Tailwind CSS 3.4
+- Tailwind CSS 3.4 + `@tailwindcss/typography` for markdown prose
+- `react-markdown` + `remark-gfm` for full GFM markdown rendering
 - Vitest for testing
 
 **Routes:**
@@ -33,65 +75,97 @@ powerup/
 | `/skills/:slug` | SkillPage | Detailed skill view with file browser |
 | `/docs` | DocsPage | Documentation page |
 
-**Key Services (website/src/services/):**
-- `skillService.ts` - Detailed skill data (SkillPage)
-- `libraryService.ts` - Library grid skills (GalleryPage)
-- `featuredService.ts` - Featured skills (HomePage)
-- `categoryService.ts` - Category grid (HomePage)
-- `filterService.ts` - Filter logic (GalleryPage)
-
-**Data Sources:**
-- `detailedSkills` (website/src/data/skills.ts) - Full skill metadata for detail pages
-- `librarySkills` (website/src/data/skills.ts) - Simplified cards for library grid
-- `featuredSkills` (website/src/data/skills.ts) - Curated featured skills
-- `skills-manifest.json` (generated at build) - Auto-generated from `skills/` folder
+**Key Files:**
+| File | Purpose |
+|------|---------|
+| `website/scripts/generate-manifest.js` | Build script: skills/ → manifest |
+| `website/src/types/skills.ts` | TypeScript interfaces (SkillMeta, SkillCard, etc.) |
+| `website/src/data/skills.ts` | Manifest import + transformation to 3 arrays |
+| `website/src/services/skillService.ts` | Detailed skill CRUD |
+| `website/src/services/libraryService.ts` | Library grid filtering/search |
+| `website/src/services/featuredService.ts` | Featured skills |
+| `website/src/components/SkillDetail.tsx` | Skill detail view (markdown + code viewer) |
 
 ---
 
 ## Skills System
 
-### Skill Definition Format
+### SKILL.md Frontmatter Schema
 
-Each skill lives in `skills/<skill-name>/SKILL.md` with YAML frontmatter:
+Each skill lives in `skills/<skill-name>/SKILL.md`. The frontmatter supports these fields:
 
-```markdown
+```yaml
 ---
-name: my-skill
+# Identity (required)
+name: "My Skill"
 description: What this skill does
-tags: [category1, category2]
+tags: [tools, mcp]
+
+# Classification
+category: tools              # tools | prompts | workflows | data
+language: TypeScript         # TypeScript | Python | JSON | Prompt
+complexity: Beginner         # Beginner | Intermediate | Advanced
+
+# Attribution
+author: your-name
+version: 1.0.0
+icon: extension              # Google Material Symbol name
+
+# Display (library + featured cards)
+color: "bg-[#D1FADF]"       # Tailwind bg for library card
+stars: 120
+downloads: 500
+
+# Featured section
+featured: true
+rating: 4.9
+backgroundColor: bg-accent-sky
+
+# Detail page
+features:
+  - Feature one
+  - Feature two
+useCommand: "npx your-skill start"
 ---
 
 # My Skill
 
-Skill documentation here...
+Markdown body content becomes the readme on the detail page.
+Supports full GFM: tables, task lists, code blocks, images, links.
 ```
 
 ### Manifest Generation
 
-The build pipeline auto-generates `public/skills-manifest.json` from `skills/`:
+The build script reads skills/ and produces a rich manifest:
 
 ```bash
-# Manual generation
 cd website
-npm run generate-manifest
-
-# Full build (includes manifest generation)
-npm run build
+npm run generate-manifest    # generate manifest only
+npm run build                # full build (manifest + vite build)
 ```
 
-**Script:** `website/scripts/generate-manifest.js`
-- Scans `skills/` for folders containing `SKILL.md`
-- Parses YAML frontmatter (name, description, tags)
-- Copies binary assets to `public/skills/<slug>/`
-- Outputs `public/skills-manifest.json`
+**What `generate-manifest.js` does:**
+1. Scans `skills/` for folders containing `SKILL.md` (skips `_` prefixed dirs)
+2. Parses full YAML frontmatter (all fields above)
+3. Extracts SKILL.md body as `readme` field
+4. Reads all files in skill dir — text files get content embedded, binary files get copied to `public/skills/{slug}/`
+5. Computes file sizes and last-modified dates
+6. Outputs `public/skills-manifest.json` — a single JSON array of all skills
+
+**Binary file handling:**
+- Detected by extension: `.png`, `.jpg`, `.gif`, `.svg`, `.ico`, etc.
+- Content set to `null`, `isBinary: true`
+- Copied to `public/skills/{slug}/` for serving
 
 ---
 
 ## Development Commands
 
 ```bash
+cd website
+
 # Install dependencies
-cd website && npm install
+npm install
 
 # Dev server (with manifest generation)
 npm run dev
@@ -114,70 +188,30 @@ npm run generate-manifest
 ## Adding a New Skill
 
 1. Create folder: `skills/my-new-skill/`
-2. Add `SKILL.md` with frontmatter:
-   ```markdown
-   ---
-   name: my-new-skill
-   description: Description here
-   tags: [tools, mcp]
-   ---
-   
-   # My New Skill
-   
-   Documentation...
-   ```
-3. Add any asset files (images, etc.) to the skill folder
+2. Add `SKILL.md` with full frontmatter (see schema above)
+3. Add source files, images, etc. to the skill folder
 4. Regenerate manifest: `cd website && npm run generate-manifest`
-5. Add detailed data to `website/src/data/skills.ts` for the SkillPage
+5. Run `npm run dev` to see it live
+6. **No code changes needed** — the pipeline picks up new skills automatically
 
 ---
 
-## Testing
+## Deployment (GitHub Pages)
 
-```bash
-cd website
-npm run test          # Run tests once (vitest)
-npm run test -- --ui  # Run with UI
-```
+**Base path:** `/powerup/` (configured in `vite.config.ts`)
 
-**Stack:** Vitest + React Testing Library + jsdom
-
-**Configuration:** `vite.config.ts` → `test` section
-- `globals: true`
-- `environment: "jsdom"`
-- `setupFiles: "./src/test/setup.ts"`
-- `include: ["src/**/*.{test,spec}.{ts,tsx}"]`
-
-**Test files:** Co-located `*.test.tsx` alongside components
-
-**Automatic:** Push to `main` → GitHub Actions builds & deploys to GitHub Pages.
+**Workflow:** `.github/workflows/deploy.yml`
+- Triggers on push to `main`
+- Uses `peaceiris/actions-gh-pages@v4`
+- Builds the site in `website/`, deploys `dist/` to the `gh-pages` branch
+- GitHub Pages serves from the `gh-pages` branch
 
 **Setup (one-time):**
 1. Push to GitHub
-2. Repo Settings → Pages → Source: "GitHub Actions"
-3. Workflow: `.github/workflows/deploy.yml`
+2. Repo Settings → Pages → Source: "Deploy from a branch", Branch: `gh-pages`, Folder: `/ (root)`
+3. Push triggers automatic deployment
 
-**Workflow details (`.github/workflows/deploy.yml`):**
-- Triggers: Push to `main`, manual dispatch
-- Node 20, npm cache
-- Runs `npm ci && npm run build` in `website/`
-- Uploads `website/dist` as Pages artifact
-- Deploys to `github-pages` environment
-
-**Base path:** `/website/` (configured in `vite.config.ts`) for GitHub Pages subpath deployment
-
----
-
-## Key Files Reference
-
-| File | Purpose |
-|------|---------|
-| `website/vite.config.ts` | Vite config (base: /website/ for GitHub Pages) |
-| `website/src/App.tsx` | Route definitions with Layout wrapper |
-| `website/src/services/skillService.ts` | Detailed skill CRUD operations |
-| `website/src/services/libraryService.ts` | Library grid filtering/search |
-| `website/scripts/generate-manifest.js` | Manifest generator from skills/ |
-| `skills/README.md` | Skill authoring guide |
+**Live site:** https://ljlabs.github.io/powerup/
 
 ---
 
@@ -188,6 +222,9 @@ cd website
 npm run test          # Run all tests
 npm run test -- --watch  # Watch mode
 ```
+
+**Stack:** Vitest + React Testing Library + jsdom
+**Test files:** Co-located `*.test.tsx` alongside components
 
 ---
 

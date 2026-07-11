@@ -12,6 +12,7 @@ type Tab = "overview" | "files";
 export default function SkillDetail({ skill }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [selectedFile, setSelectedFile] = useState<SkillFile | null>(null);
+  const [showInstallModal, setShowInstallModal] = useState(false);
 
   const hasDetail = Boolean(skill.readme || skill.skillFiles);
 
@@ -49,7 +50,10 @@ export default function SkillDetail({ skill }: Props) {
           </div>
         </div>
         <div className="flex flex-wrap gap-4">
-          <button className="shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] hover:shadow-[6px_6px_0px_0px_rgba(26,26,26,1)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none bg-brand-yellow border-2 border-on-background rounded-xl px-6 py-3 font-label-bold text-on-background flex items-center gap-2 transition-all">
+          <button
+            onClick={() => setShowInstallModal(true)}
+            className="shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] hover:shadow-[6px_6px_0px_0px_rgba(26,26,26,1)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none bg-brand-yellow border-2 border-on-background rounded-xl px-6 py-3 font-label-bold text-on-background flex items-center gap-2 transition-all"
+          >
             <span className="material-symbols-outlined">download</span>
             Install Skill
           </button>
@@ -264,6 +268,73 @@ export default function SkillDetail({ skill }: Props) {
             </div>
           )}
         </>
+      )}
+
+      {/* Install Modal */}
+      {showInstallModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+          onClick={() => setShowInstallModal(false)}
+        >
+          <div
+            className="bg-white border-2 border-on-background rounded-2xl shadow-[6px_6px_0px_0px_rgba(26,26,26,1)] p-8 max-w-lg w-full relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowInstallModal(false)}
+              className="absolute top-4 right-4 text-secondary hover:text-on-background transition-colors"
+              aria-label="Close"
+            >
+              <span className="material-symbols-outlined">close</span>
+            </button>
+
+            <h2 className="font-headline-lg text-headline-lg text-on-background mb-2">
+              Install {skill.name}
+            </h2>
+            <p className="font-body-md text-secondary mb-6">
+              Download the skill into your project's
+              <code className="bg-surface-container px-1 py-0.5 rounded text-sm"> .claude/skills</code> folder:
+            </p>
+
+            <div className="bg-on-background rounded-xl p-4 mb-6 relative group">
+              <button
+                onClick={() =>
+                  navigator.clipboard.writeText(
+                    `curl -L https://github.com/ljlabs/powerup/tree/main/skills/${skill.slug} | tar -xz -C .claude/skills/`,
+                  )
+                }
+                className="absolute top-3 right-3 p-1.5 rounded-lg bg-surface-container/20 hover:bg-surface-container/40 text-surface-container-lowest opacity-0 group-hover:opacity-100 transition-opacity"
+                aria-label="Copy to clipboard"
+              >
+                <span className="material-symbols-outlined !text-base">content_copy</span>
+              </button>
+              <pre className="font-mono text-sm text-[#f1f1f1] whitespace-pre-wrap break-all">
+                <code>{`curl -L https://github.com/ljlabs/powerup/tree/main/skills/${skill.slug} | tar -xz -C .claude/skills/`}</code>
+              </pre>
+            </div>
+
+            <p className="font-body-sm text-secondary mb-2">
+              Or browse the skill files directly:
+            </p>
+
+            <a
+              href={`https://github.com/ljlabs/powerup/tree/main/skills/${skill.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 font-body-sm text-tertiary hover:underline mb-6"
+            >
+              <span className="material-symbols-outlined !text-base">open_in_new</span>
+              github.com/ljlabs/powerup/tree/main/skills/{skill.slug}
+            </a>
+
+            <button
+              onClick={() => setShowInstallModal(false)}
+              className="w-full shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] hover:shadow-[6px_6px_0px_0px_rgba(26,26,26,1)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none bg-brand-yellow border-2 border-on-background rounded-xl px-6 py-3 font-label-bold text-on-background transition-all"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

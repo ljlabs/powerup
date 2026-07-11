@@ -48,7 +48,8 @@ function formatDate(date) {
 }
 
 function parseFrontmatter(content) {
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
+  // Handle both \n and \r\n line endings
+  const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!match) return { frontmatter: {}, body: content };
 
   const raw = match[1];
