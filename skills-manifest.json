@@ -1,0 +1,381 @@
+[
+  {
+    "slug": "example-skill",
+    "name": "Example Skill",
+    "description": "A sample skill to demonstrate the site structure",
+    "tags": [
+      "demo",
+      "example"
+    ],
+    "files": [
+      "SKILL.md"
+    ],
+    "category": "tools",
+    "language": "TypeScript",
+    "complexity": "Beginner",
+    "author": "jorda",
+    "version": "1.0.0",
+    "icon": "extension",
+    "color": "bg-[#D1FADF]",
+    "stars": 42,
+    "downloads": 150,
+    "rating": 4.5,
+    "featured": true,
+    "backgroundColor": "bg-accent-mint",
+    "features": [
+      "Simple setup and configuration",
+      "Full TypeScript support",
+      "Works out of the box"
+    ],
+    "useCommand": "claude install example-skill",
+    "readme": "# Example Skill\n\nThis is a sample skill. Replace it with your own.\n\n## Usage\n\n```bash\necho \"Hello from example-skill\"\n```\n\n## Configuration\n\nThe skill can be configured via the `settings.json` file in your `.claude/` directory:\n\n```json\n{\n  \"example-skill\": {\n    \"enabled\": true\n  }\n}\n```\n\n## How It Works\n\nThis skill demonstrates the structure that all skills in this collection follow:\n\n1. A `SKILL.md` file with YAML frontmatter and markdown body\n2. Optional source files in subdirectories\n3. A manifest generated at build time that the website renders",
+    "skillFiles": [
+      {
+        "name": "SKILL.md",
+        "size": "1020 B",
+        "lastModified": "2026-07-11",
+        "content": "---\nname: Example Skill\ndescription: A sample skill to demonstrate the site structure\ntags: [demo, example]\ncategory: tools\nlanguage: TypeScript\ncomplexity: Beginner\nauthor: jorda\nversion: 1.0.0\nicon: extension\ncolor: \"bg-[#D1FADF]\"\nstars: 42\ndownloads: 150\nrating: 4.5\nfeatured: true\nbackgroundColor: bg-accent-mint\nfeatures:\n  - Simple setup and configuration\n  - Full TypeScript support\n  - Works out of the box\nuseCommand: \"claude install example-skill\"\n---\n\n# Example Skill\n\nThis is a sample skill. Replace it with your own.\n\n## Usage\n\n```bash\necho \"Hello from example-skill\"\n```\n\n## Configuration\n\nThe skill can be configured via the `settings.json` file in your `.claude/` directory:\n\n```json\n{\n  \"example-skill\": {\n    \"enabled\": true\n  }\n}\n```\n\n## How It Works\n\nThis skill demonstrates the structure that all skills in this collection follow:\n\n1. A `SKILL.md` file with YAML frontmatter and markdown body\n2. Optional source files in subdirectories\n3. A manifest generated at build time that the website renders\n"
+      }
+    ]
+  },
+  {
+    "slug": "github-io-deploy",
+    "name": "GitHub.io Deploy",
+    "description": "Deploy a Vite React website to GitHub Pages using GitHub Actions. Covers workflow setup, gh-pages branch configuration, repo settings, and troubleshooting 404 errors.",
+    "tags": [
+      "deploy",
+      "github-pages",
+      "vite",
+      "react",
+      "actions"
+    ],
+    "files": [
+      "SKILL.md"
+    ],
+    "category": "tools",
+    "language": "TypeScript",
+    "complexity": "Intermediate",
+    "author": "anthropic",
+    "version": "1.0.0",
+    "icon": "cloud_upload",
+    "color": "bg-[#BAE6FD]",
+    "stars": 75,
+    "downloads": 400,
+    "rating": 4.4,
+    "backgroundColor": "bg-accent-sky",
+    "features": [
+      "GitHub Actions auto-deploy on push",
+      "peaceiris/actions-gh-pages integration",
+      "Vite base path configuration",
+      "gh-pages branch setup",
+      "Windows vs Linux CI path handling",
+      "Troubleshooting guide for common issues"
+    ],
+    "useCommand": "See deployment steps in SKILL.md",
+    "readme": "# GitHub.io Deploy\n\nDeploy a Vite + React website to GitHub Pages using GitHub Actions.\n\n## How it works\n\n1. Build the Vite project\n2. Push built `dist/` to `gh-pages` branch via `peaceiris/actions-gh-pages`\n3. GitHub Pages serves from `gh-pages` branch\n\n## Setup steps\n\n### 1. Update vite.config.ts\n\n```ts\nbase: \"/<repo-name>/\",  // e.g., \"/powerup/\" for ljlabs/powerup\n```\n\n### 2. Create workflow\n\n`.github/workflows/deploy.yml` — see full template in SKILL.md.\n\n### 3. Create gh-pages branch\n\n```bash\ngit checkout --orphan gh-pages\necho \"deploying\" > index.html\ngit add index.html && git commit -m \"init\" && git push origin gh-pages\ngit checkout main\n```\n\n### 4. Enable Pages in repo settings\n\nSettings → Pages → Deploy from a branch → `gh-pages` → `/ (root)`\n\n### 5. Push to deploy\n\n```bash\ngit push origin main\n```\n\nSite live at: `https://<owner>.github.io/<repo>/`\n\n## Common issues\n\n- **404 after deploy** — `base` in vite.config.ts doesn't match repo name\n- **\"Pages already enabled\"** — change source to \"Deploy from a branch\"\n- **Build fails in CI** — Windows backslashes in npm scripts; remove explicit paths\n- **Wrong content served** — check Pages source is `gh-pages` branch, not `main`",
+    "skillFiles": [
+      {
+        "name": "SKILL.md",
+        "size": "1.9 KB",
+        "lastModified": "2026-07-11",
+        "content": "---\nname: GitHub.io Deploy\ndescription: Deploy a Vite React website to GitHub Pages using GitHub Actions. Covers workflow setup, gh-pages branch configuration, repo settings, and troubleshooting 404 errors.\ntags: [deploy, github-pages, vite, react, actions]\ncategory: tools\nlanguage: TypeScript\ncomplexity: Intermediate\nauthor: anthropic\nversion: 1.0.0\nicon: cloud_upload\ncolor: \"bg-[#BAE6FD]\"\nstars: 75\ndownloads: 400\nrating: 4.4\nfeatured: false\nbackgroundColor: bg-accent-sky\nfeatures:\n  - GitHub Actions auto-deploy on push\n  - peaceiris/actions-gh-pages integration\n  - Vite base path configuration\n  - gh-pages branch setup\n  - Windows vs Linux CI path handling\n  - Troubleshooting guide for common issues\nuseCommand: \"See deployment steps in SKILL.md\"\n---\n\n# GitHub.io Deploy\n\nDeploy a Vite + React website to GitHub Pages using GitHub Actions.\n\n## How it works\n\n1. Build the Vite project\n2. Push built `dist/` to `gh-pages` branch via `peaceiris/actions-gh-pages`\n3. GitHub Pages serves from `gh-pages` branch\n\n## Setup steps\n\n### 1. Update vite.config.ts\n\n```ts\nbase: \"/<repo-name>/\",  // e.g., \"/powerup/\" for ljlabs/powerup\n```\n\n### 2. Create workflow\n\n`.github/workflows/deploy.yml` — see full template in SKILL.md.\n\n### 3. Create gh-pages branch\n\n```bash\ngit checkout --orphan gh-pages\necho \"deploying\" > index.html\ngit add index.html && git commit -m \"init\" && git push origin gh-pages\ngit checkout main\n```\n\n### 4. Enable Pages in repo settings\n\nSettings → Pages → Deploy from a branch → `gh-pages` → `/ (root)`\n\n### 5. Push to deploy\n\n```bash\ngit push origin main\n```\n\nSite live at: `https://<owner>.github.io/<repo>/`\n\n## Common issues\n\n- **404 after deploy** — `base` in vite.config.ts doesn't match repo name\n- **\"Pages already enabled\"** — change source to \"Deploy from a branch\"\n- **Build fails in CI** — Windows backslashes in npm scripts; remove explicit paths\n- **Wrong content served** — check Pages source is `gh-pages` branch, not `main`\n"
+      }
+    ]
+  },
+  {
+    "slug": "init-github-io-claude-skills",
+    "name": "Init GitHub.io Claude Skills",
+    "description": "Scaffold a GitHub Pages website that showcases Claude skills from a GitHub repo. Creates a React + Vite + TypeScript + Tailwind site with auto-deploy via GitHub Actions.",
+    "tags": [
+      "scaffold",
+      "github-pages",
+      "react",
+      "vite"
+    ],
+    "files": [
+      "SKILL.md"
+    ],
+    "category": "tools",
+    "language": "TypeScript",
+    "complexity": "Intermediate",
+    "author": "anthropic",
+    "version": "1.0.0",
+    "icon": "deploy",
+    "color": "bg-[#BAE6FD]",
+    "stars": 150,
+    "downloads": 800,
+    "rating": 4.7,
+    "featured": true,
+    "backgroundColor": "bg-accent-sky",
+    "features": [
+      "Vite + React + TypeScript + Tailwind CSS setup",
+      "GitHub Actions auto-deploy to *.github.io",
+      "Manifest generator scans skills/ folders",
+      "Monorepo and single-repo modes",
+      "HashRouter for GitHub Pages compatibility"
+    ],
+    "useCommand": "node <skill-dir>/scripts/scaffold.js <target-directory>",
+    "readme": "# Init GitHub.io Claude Skills\n\nScaffold a React-based GitHub Pages site that automatically showcases Claude skills stored in a GitHub repository.\n\n## What this creates\n\n- Vite + React + TypeScript project\n- Tailwind CSS for styling\n- GitHub Actions workflow for auto-deploy\n- Manifest generator (scripts/generate-manifest.js)\n- React app with routing, landing page, and skill detail page\n\n## Usage\n\n```bash\n# Single-repo mode\nnode <skill-dir>/scripts/scaffold.js my-project\n\n# Monorepo mode\nnode <skill-dir>/scripts/scaffold.js workspace/website --monorepo\n```\n\n## Deployment\n\nPush to main and GitHub Actions deploys automatically. Set Pages source to \"Deploy from a branch\" with the `gh-pages` branch.\n\nSee the full guide in the skill's SKILL.md file for detailed setup instructions.",
+    "skillFiles": [
+      {
+        "name": "SKILL.md",
+        "size": "1.5 KB",
+        "lastModified": "2026-07-11",
+        "content": "---\nname: Init GitHub.io Claude Skills\ndescription: Scaffold a GitHub Pages website that showcases Claude skills from a GitHub repo. Creates a React + Vite + TypeScript + Tailwind site with auto-deploy via GitHub Actions.\ntags: [scaffold, github-pages, react, vite]\ncategory: tools\nlanguage: TypeScript\ncomplexity: Intermediate\nauthor: anthropic\nversion: 1.0.0\nicon: deploy\ncolor: \"bg-[#BAE6FD]\"\nstars: 150\ndownloads: 800\nrating: 4.7\nfeatured: true\nbackgroundColor: bg-accent-sky\nfeatures:\n  - Vite + React + TypeScript + Tailwind CSS setup\n  - GitHub Actions auto-deploy to *.github.io\n  - Manifest generator scans skills/ folders\n  - Monorepo and single-repo modes\n  - HashRouter for GitHub Pages compatibility\nuseCommand: \"node <skill-dir>/scripts/scaffold.js <target-directory>\"\n---\n\n# Init GitHub.io Claude Skills\n\nScaffold a React-based GitHub Pages site that automatically showcases Claude skills stored in a GitHub repository.\n\n## What this creates\n\n- Vite + React + TypeScript project\n- Tailwind CSS for styling\n- GitHub Actions workflow for auto-deploy\n- Manifest generator (scripts/generate-manifest.js)\n- React app with routing, landing page, and skill detail page\n\n## Usage\n\n```bash\n# Single-repo mode\nnode <skill-dir>/scripts/scaffold.js my-project\n\n# Monorepo mode\nnode <skill-dir>/scripts/scaffold.js workspace/website --monorepo\n```\n\n## Deployment\n\nPush to main and GitHub Actions deploys automatically. Set Pages source to \"Deploy from a branch\" with the `gh-pages` branch.\n\nSee the full guide in the skill's SKILL.md file for detailed setup instructions.\n"
+      }
+    ]
+  },
+  {
+    "slug": "init-local-first-node-project",
+    "name": "Init Local-First Node Project",
+    "description": "Scaffold a local-first application with Vite+React+TypeScript frontend, Node/Express+TypeScript backend, shared types package, and Dockerfile for single-port deployment.",
+    "tags": [
+      "scaffold",
+      "node",
+      "react",
+      "docker",
+      "local-first"
+    ],
+    "files": [
+      "SKILL.md"
+    ],
+    "category": "tools",
+    "language": "TypeScript",
+    "complexity": "Intermediate",
+    "author": "anthropic",
+    "version": "1.0.0",
+    "icon": "terminal",
+    "color": "bg-[#D1FADF]",
+    "stars": 95,
+    "downloads": 600,
+    "rating": 4.6,
+    "backgroundColor": "bg-accent-mint",
+    "features": [
+      "Single-port server (API + built UI)",
+      "Shared TypeScript types package",
+      "Vite dev server with API proxy",
+      "Multi-stage Dockerfile",
+      ".env-driven port configuration"
+    ],
+    "useCommand": "bash <skill-dir>/scripts/scaffold.sh <project-dir> <description> <port>",
+    "readme": "# Init Local-First Node Project\n\nScaffolds a local-first app: one Node/Express server that serves the built React UI and the API on a single port.\n\n## What this creates\n\n- packages/shared-types — TS types imported by both web and server\n- packages/server — Node + Express + TypeScript\n- packages/web — Vite + React + TypeScript\n- Dockerfile — multi-stage build\n- docker-compose.yml\n- .env.example — PORT=3000\n\n## Usage\n\n```bash\nbash <skill-dir>/scripts/scaffold.sh my-tool \"A local dashboard\" 3000\n```\n\n## Key conventions\n\n- Single port, always (API + UI on one port)\n- Port is .env-driven (default: 3000)\n- Dev mode uses Vite proxy for /api requests\n- Shared types package prevents contract drift",
+    "skillFiles": [
+      {
+        "name": "SKILL.md",
+        "size": "1.4 KB",
+        "lastModified": "2026-07-11",
+        "content": "---\nname: Init Local-First Node Project\ndescription: Scaffold a local-first application with Vite+React+TypeScript frontend, Node/Express+TypeScript backend, shared types package, and Dockerfile for single-port deployment.\ntags: [scaffold, node, react, docker, local-first]\ncategory: tools\nlanguage: TypeScript\ncomplexity: Intermediate\nauthor: anthropic\nversion: 1.0.0\nicon: terminal\ncolor: \"bg-[#D1FADF]\"\nstars: 95\ndownloads: 600\nrating: 4.6\nfeatured: false\nbackgroundColor: bg-accent-mint\nfeatures:\n  - Single-port server (API + built UI)\n  - Shared TypeScript types package\n  - Vite dev server with API proxy\n  - Multi-stage Dockerfile\n  - .env-driven port configuration\nuseCommand: \"bash <skill-dir>/scripts/scaffold.sh <project-dir> <description> <port>\"\n---\n\n# Init Local-First Node Project\n\nScaffolds a local-first app: one Node/Express server that serves the built React UI and the API on a single port.\n\n## What this creates\n\n- packages/shared-types — TS types imported by both web and server\n- packages/server — Node + Express + TypeScript\n- packages/web — Vite + React + TypeScript\n- Dockerfile — multi-stage build\n- docker-compose.yml\n- .env.example — PORT=3000\n\n## Usage\n\n```bash\nbash <skill-dir>/scripts/scaffold.sh my-tool \"A local dashboard\" 3000\n```\n\n## Key conventions\n\n- Single port, always (API + UI on one port)\n- Port is .env-driven (default: 3000)\n- Dev mode uses Vite proxy for /api requests\n- Shared types package prevents contract drift\n"
+      }
+    ]
+  },
+  {
+    "slug": "init-python-project",
+    "name": "Init Python Project",
+    "description": "Scaffold a greenfield Python project with venv, pyproject.toml, src-layout, pytest tests, git init, and a tailored CLAUDE.md.",
+    "tags": [
+      "scaffold",
+      "python",
+      "pytest",
+      "pyproject"
+    ],
+    "files": [
+      "SKILL.md"
+    ],
+    "category": "tools",
+    "language": "Python",
+    "complexity": "Beginner",
+    "author": "anthropic",
+    "version": "1.0.0",
+    "icon": "code",
+    "color": "bg-[#FFF9C4]",
+    "stars": 110,
+    "downloads": 700,
+    "rating": 4.5,
+    "backgroundColor": "bg-accent-apricot",
+    "features": [
+      "pyproject.toml (PEP 621) — no legacy setup.py",
+      "src-layout package structure",
+      "pytest test runner",
+      "Virtual environment setup",
+      "Tailored CLAUDE.md"
+    ],
+    "useCommand": "bash <skill-dir>/scripts/scaffold.sh <project-dir> <package_name> <description>",
+    "readme": "# Init Python Project\n\nScaffolds a clean, opinionated Python project skeleton so a fresh Claude Code session starts with working structure.\n\n## What this creates\n\n- pyproject.toml (PEP 621)\n- src-layout package\n- tests/ with pytest\n- venv setup\n- CLAUDE.md with project-specific content\n- git init (no automatic commit)\n\n## Usage\n\n```bash\nbash <skill-dir>/scripts/scaffold.sh my-tool \"A CLI tool for X\"\n```\n\n## Key conventions\n\n- Uses pyproject.toml, not setup.py\n- Install: pip install -e \".[dev]\" inside venv\n- Test runner: pytest\n- Never git commit automatically — just git init",
+    "skillFiles": [
+      {
+        "name": "SKILL.md",
+        "size": "1.2 KB",
+        "lastModified": "2026-07-11",
+        "content": "---\nname: Init Python Project\ndescription: Scaffold a greenfield Python project with venv, pyproject.toml, src-layout, pytest tests, git init, and a tailored CLAUDE.md.\ntags: [scaffold, python, pytest, pyproject]\ncategory: tools\nlanguage: Python\ncomplexity: Beginner\nauthor: anthropic\nversion: 1.0.0\nicon: code\ncolor: \"bg-[#FFF9C4]\"\nstars: 110\ndownloads: 700\nrating: 4.5\nfeatured: false\nbackgroundColor: bg-accent-apricot\nfeatures:\n  - pyproject.toml (PEP 621) — no legacy setup.py\n  - src-layout package structure\n  - pytest test runner\n  - Virtual environment setup\n  - Tailored CLAUDE.md\nuseCommand: \"bash <skill-dir>/scripts/scaffold.sh <project-dir> <package_name> <description>\"\n---\n\n# Init Python Project\n\nScaffolds a clean, opinionated Python project skeleton so a fresh Claude Code session starts with working structure.\n\n## What this creates\n\n- pyproject.toml (PEP 621)\n- src-layout package\n- tests/ with pytest\n- venv setup\n- CLAUDE.md with project-specific content\n- git init (no automatic commit)\n\n## Usage\n\n```bash\nbash <skill-dir>/scripts/scaffold.sh my-tool \"A CLI tool for X\"\n```\n\n## Key conventions\n\n- Uses pyproject.toml, not setup.py\n- Install: pip install -e \".[dev]\" inside venv\n- Test runner: pytest\n- Never git commit automatically — just git init\n"
+      }
+    ]
+  },
+  {
+    "slug": "init-react-firebase-project",
+    "name": "Init React + Firebase Project",
+    "description": "Scaffold a React website with Vite + TypeScript, backed by Firebase (Firestore/Auth/Functions/Hosting) with local emulators, Jest unit tests, and Playwright e2e.",
+    "tags": [
+      "scaffold",
+      "react",
+      "firebase",
+      "vite",
+      "playwright"
+    ],
+    "files": [
+      "SKILL.md"
+    ],
+    "category": "tools",
+    "language": "TypeScript",
+    "complexity": "Advanced",
+    "author": "anthropic",
+    "version": "1.0.0",
+    "icon": "web",
+    "color": "bg-[#FED7AA]",
+    "stars": 130,
+    "downloads": 900,
+    "rating": 4.8,
+    "backgroundColor": "bg-accent-apricot",
+    "features": [
+      "Vite + React + TypeScript frontend",
+      "Firebase Functions backend",
+      "Firestore with local emulators",
+      "Jest unit tests for web and functions",
+      "Playwright e2e tests",
+      "Firebase Auth scaffolding"
+    ],
+    "useCommand": "bash <skill-dir>/scripts/scaffold.sh <project-dir> <description>",
+    "readme": "# Init React + Firebase Project\n\nScaffolds a hosted-website-style project: Vite/React/TypeScript frontend, Firebase Functions backend, Firestore, emulators for local dev, and a full test setup.\n\n## What this creates\n\n- web/ — Vite + React + TypeScript\n- functions/ — Firebase Functions (TypeScript)\n- e2e/ — Playwright e2e tests\n- firebase.json + .firebaserc\n- firestore.rules + firestore.indexes.json\n\n## Usage\n\n```bash\nbash <skill-dir>/scripts/scaffold.sh my-app \"A dashboard app\"\n```\n\n## Key conventions\n\n- Jest everywhere (not Vitest) for uniformity\n- Playwright for e2e against emulators\n- .firebaserc has placeholder project ID — user runs firebase use --add\n- Never deploy or create live Firebase project — scaffold only",
+    "skillFiles": [
+      {
+        "name": "SKILL.md",
+        "size": "1.5 KB",
+        "lastModified": "2026-07-11",
+        "content": "---\nname: Init React + Firebase Project\ndescription: Scaffold a React website with Vite + TypeScript, backed by Firebase (Firestore/Auth/Functions/Hosting) with local emulators, Jest unit tests, and Playwright e2e.\ntags: [scaffold, react, firebase, vite, playwright]\ncategory: tools\nlanguage: TypeScript\ncomplexity: Advanced\nauthor: anthropic\nversion: 1.0.0\nicon: web\ncolor: \"bg-[#FED7AA]\"\nstars: 130\ndownloads: 900\nrating: 4.8\nfeatured: false\nbackgroundColor: bg-accent-apricot\nfeatures:\n  - Vite + React + TypeScript frontend\n  - Firebase Functions backend\n  - Firestore with local emulators\n  - Jest unit tests for web and functions\n  - Playwright e2e tests\n  - Firebase Auth scaffolding\nuseCommand: \"bash <skill-dir>/scripts/scaffold.sh <project-dir> <description>\"\n---\n\n# Init React + Firebase Project\n\nScaffolds a hosted-website-style project: Vite/React/TypeScript frontend, Firebase Functions backend, Firestore, emulators for local dev, and a full test setup.\n\n## What this creates\n\n- web/ — Vite + React + TypeScript\n- functions/ — Firebase Functions (TypeScript)\n- e2e/ — Playwright e2e tests\n- firebase.json + .firebaserc\n- firestore.rules + firestore.indexes.json\n\n## Usage\n\n```bash\nbash <skill-dir>/scripts/scaffold.sh my-app \"A dashboard app\"\n```\n\n## Key conventions\n\n- Jest everywhere (not Vitest) for uniformity\n- Playwright for e2e against emulators\n- .firebaserc has placeholder project ID — user runs firebase use --add\n- Never deploy or create live Firebase project — scaffold only\n"
+      }
+    ]
+  },
+  {
+    "slug": "playwright-cli",
+    "name": "Playwright CLI",
+    "description": "Automate browser interactions, test web pages, and work with Playwright tests. Use for taking screenshots, navigating pages, clicking elements, filling forms, and debugging web UIs.",
+    "tags": [
+      "testing",
+      "browser",
+      "playwright",
+      "automation",
+      "screenshots"
+    ],
+    "files": [
+      "SKILL.md"
+    ],
+    "category": "tools",
+    "language": "TypeScript",
+    "complexity": "Intermediate",
+    "author": "anthropic",
+    "version": "1.0.0",
+    "icon": "smart_toy",
+    "color": "bg-[#E9D5FF]",
+    "stars": 320,
+    "downloads": 5000,
+    "rating": 4.9,
+    "featured": true,
+    "backgroundColor": "bg-accent-lavender",
+    "features": [
+      "Take screenshots of any webpage",
+      "Navigate and interact with elements via refs",
+      "Fill forms, click buttons, check checkboxes",
+      "Console and network request monitoring",
+      "Multi-tab workflow support",
+      "Persistent browser sessions"
+    ],
+    "useCommand": "playwright-cli open <url>",
+    "readme": "# Playwright CLI\n\nAutomate browser interactions, test web pages, and debug web UIs with a simple command-line interface.\n\n## Quick start\n\n```bash\nplaywright-cli open https://example.com\nplaywright-cli snapshot\nplaywright-cli click e5\nplaywright-cli screenshot\nplaywright-cli close\n```\n\n## Core commands\n\n```bash\nplaywright-cli open <url>          # Open browser to URL\nplaywright-cli goto <url>          # Navigate to URL\nplaywright-cli snapshot            # Get page snapshot with element refs\nplaywright-cli click <ref>         # Click element by ref\nplaywright-cli type <text>         # Type text\nplaywright-cli fill <ref> <text>   # Fill input field\nplaywright-cli screenshot          # Take screenshot\nplaywright-cli close               # Close browser\n```\n\n## How it works\n\n1. `open` or `goto` — navigates to a URL\n2. `snapshot` — captures the page structure with element refs (e1, e2, etc.)\n3. `click e5` — interacts with elements using those refs\n4. `screenshot` — captures the current state\n\n## Full reference\n\nSee the SKILL.md file in `.claude/skills/playwright-cli/` for the complete command reference, including keyboard/mouse events, storage management, network mocking, and video recording.",
+    "skillFiles": [
+      {
+        "name": "SKILL.md",
+        "size": "2.0 KB",
+        "lastModified": "2026-07-11",
+        "content": "---\nname: Playwright CLI\ndescription: Automate browser interactions, test web pages, and work with Playwright tests. Use for taking screenshots, navigating pages, clicking elements, filling forms, and debugging web UIs.\ntags: [testing, browser, playwright, automation, screenshots]\ncategory: tools\nlanguage: TypeScript\ncomplexity: Intermediate\nauthor: anthropic\nversion: 1.0.0\nicon: smart_toy\ncolor: \"bg-[#E9D5FF]\"\nstars: 320\ndownloads: 5000\nrating: 4.9\nfeatured: true\nbackgroundColor: bg-accent-lavender\nfeatures:\n  - Take screenshots of any webpage\n  - Navigate and interact with elements via refs\n  - Fill forms, click buttons, check checkboxes\n  - Console and network request monitoring\n  - Multi-tab workflow support\n  - Persistent browser sessions\nuseCommand: \"playwright-cli open <url>\"\n---\n\n# Playwright CLI\n\nAutomate browser interactions, test web pages, and debug web UIs with a simple command-line interface.\n\n## Quick start\n\n```bash\nplaywright-cli open https://example.com\nplaywright-cli snapshot\nplaywright-cli click e5\nplaywright-cli screenshot\nplaywright-cli close\n```\n\n## Core commands\n\n```bash\nplaywright-cli open <url>          # Open browser to URL\nplaywright-cli goto <url>          # Navigate to URL\nplaywright-cli snapshot            # Get page snapshot with element refs\nplaywright-cli click <ref>         # Click element by ref\nplaywright-cli type <text>         # Type text\nplaywright-cli fill <ref> <text>   # Fill input field\nplaywright-cli screenshot          # Take screenshot\nplaywright-cli close               # Close browser\n```\n\n## How it works\n\n1. `open` or `goto` — navigates to a URL\n2. `snapshot` — captures the page structure with element refs (e1, e2, etc.)\n3. `click e5` — interacts with elements using those refs\n4. `screenshot` — captures the current state\n\n## Full reference\n\nSee the SKILL.md file in `.claude/skills/playwright-cli/` for the complete command reference, including keyboard/mouse events, storage management, network mocking, and video recording.\n"
+      }
+    ]
+  },
+  {
+    "slug": "vector-store",
+    "name": "Vector Store",
+    "description": "A vector storage skill for semantic search",
+    "tags": [
+      "tools"
+    ],
+    "files": [
+      "SKILL.md"
+    ],
+    "category": "tools",
+    "language": "TypeScript",
+    "complexity": "Intermediate",
+    "author": "anthropic-labs",
+    "version": "1.2.4",
+    "icon": "database",
+    "color": "bg-[#D1FADF]",
+    "stars": 120,
+    "downloads": 2500,
+    "rating": 4.8,
+    "featured": true,
+    "backgroundColor": "bg-accent-sky",
+    "features": [
+      "Semantic search across large document collections",
+      "Multiple embedding model support",
+      "Filter by metadata",
+      "Hybrid search with keyword matching"
+    ],
+    "useCommand": "npx @anthropic-labs/vector-store start",
+    "readme": "# Vector Store\n\nVector Store enables semantic search across large document collections.\n\n## Key Features\n\n- **Semantic search** - Find documents by meaning, not just keywords\n- **Multiple embedding models** - Support for OpenAI, Cohere, and local models\n- **Metadata filtering** - Filter results by custom metadata fields\n- **Hybrid search** - Combine semantic and keyword search for best results\n\n## Usage\n\n```bash\nnpx @anthropic-labs/vector-store start\n```\n\n## How It Works\n\nThis skill demonstrates the structure that all skills in this collection follow:\n\n1. A `SKILL.md` file with YAML frontmatter and markdown body\n2. Optional source files in subdirectories\n3. A manifest generated at build time that the website renders",
+    "skillFiles": [
+      {
+        "name": "SKILL.md",
+        "size": "1.2 KB",
+        "lastModified": "2026-07-11",
+        "content": "---\nname: Vector Store\ndescription: A vector storage skill for semantic search\ntags: [tools]\ncategory: tools\nlanguage: TypeScript\ncomplexity: Intermediate\nauthor: anthropic-labs\nversion: 1.2.4\nicon: database\ncolor: \"bg-[#D1FADF]\"\nstars: 120\ndownloads: 2500\nrating: 4.8\nfeatured: true\nbackgroundColor: bg-accent-sky\nfeatures:\n  - Semantic search across large document collections\n  - Multiple embedding model support\n  - Filter by metadata\n  - Hybrid search with keyword matching\nuseCommand: \"npx @anthropic-labs/vector-store start\"\n---\n\n# Vector Store\n\nVector Store enables semantic search across large document collections.\n\n## Key Features\n\n- **Semantic search** - Find documents by meaning, not just keywords\n- **Multiple embedding models** - Support for OpenAI, Cohere, and local models\n- **Metadata filtering** - Filter results by custom metadata fields\n- **Hybrid search** - Combine semantic and keyword search for best results\n\n## Usage\n\n```bash\nnpx @anthropic-labs/vector-store start\n```\n\n## How It Works\n\nThis skill demonstrates the structure that all skills in this collection follow:\n\n1. A `SKILL.md` file with YAML frontmatter and markdown body\n2. Optional source files in subdirectories\n3. A manifest generated at build time that the website renders"
+      }
+    ]
+  },
+  {
+    "slug": "web-search-mcp",
+    "name": "Web Search MCP",
+    "description": "Web search capability for MCP servers",
+    "tags": [
+      "tools",
+      "mcp"
+    ],
+    "files": [
+      "SKILL.md"
+    ],
+    "category": "tools",
+    "language": "TypeScript",
+    "complexity": "Intermediate",
+    "author": "anthropic-labs",
+    "version": "1.0.0",
+    "icon": "search",
+    "color": "bg-[#E8D1FF]",
+    "stars": 85,
+    "downloads": 1800,
+    "rating": 4.6,
+    "featured": true,
+    "backgroundColor": "bg-accent-lilac",
+    "features": [
+      "Real-time web search via MCP",
+      "Multiple search provider support",
+      "Caching for performance",
+      "Rate limiting built-in"
+    ],
+    "useCommand": "npx @anthropic-labs/web-search-mcp start",
+    "readme": "# Web Search MCP\n\nWeb Search MCP provides real-time web search capabilities for MCP servers.\n\n## Key Features\n\n- **Real-time web search** - Search the web directly from your MCP client\n- **Multiple providers** - Support for Google, Bing, DuckDuckGo\n- **Caching** - Built-in caching for repeated queries\n- **Rate limiting** - Automatic rate limiting to respect API limits\n\n## Usage\n\n```bash\nnpx @anthropic-labs/web-search-mcp start\n```\n\n## How It Works\n\nThis skill demonstrates the structure that all skills in this collection follow:\n\n1. A `SKILL.md` file with YAML frontmatter and markdown body\n2. Optional source files in subdirectories\n3. A manifest generated at build time that the website renders",
+    "skillFiles": [
+      {
+        "name": "SKILL.md",
+        "size": "1.2 KB",
+        "lastModified": "2026-07-11",
+        "content": "---\nname: Web Search MCP\ndescription: Web search capability for MCP servers\ntags: [tools, mcp]\ncategory: tools\nlanguage: TypeScript\ncomplexity: Intermediate\nauthor: anthropic-labs\nversion: 1.0.0\nicon: search\ncolor: \"bg-[#E8D1FF]\"\nstars: 85\ndownloads: 1800\nrating: 4.6\nfeatured: true\nbackgroundColor: bg-accent-lilac\nfeatures:\n  - Real-time web search via MCP\n  - Multiple search provider support\n  - Caching for performance\n  - Rate limiting built-in\nuseCommand: \"npx @anthropic-labs/web-search-mcp start\"\n---\n\n# Web Search MCP\n\nWeb Search MCP provides real-time web search capabilities for MCP servers.\n\n## Key Features\n\n- **Real-time web search** - Search the web directly from your MCP client\n- **Multiple providers** - Support for Google, Bing, DuckDuckGo\n- **Caching** - Built-in caching for repeated queries\n- **Rate limiting** - Automatic rate limiting to respect API limits\n\n## Usage\n\n```bash\nnpx @anthropic-labs/web-search-mcp start\n```\n\n## How It Works\n\nThis skill demonstrates the structure that all skills in this collection follow:\n\n1. A `SKILL.md` file with YAML frontmatter and markdown body\n2. Optional source files in subdirectories\n3. A manifest generated at build time that the website renders"
+      }
+    ]
+  }
+]
